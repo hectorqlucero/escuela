@@ -1,0 +1,14 @@
+{:db-protocol    "mysql"
+ :db-name        "//localhost:3306/escuela?characterEncoding=UTF-8"
+ :db-user        "root"
+ :db-pwd         "44TeamLHSS0257.#"
+ :db-class       "com.mysql.cj.jdbc.Driver"
+ :email-host     "smtp.gmail.com"
+ :email-user     "user@gmail.com"
+ :email-password "xxxxxxxx"
+ :port           3000
+ :tz             "US/Pacific"
+ :site-name      "Escuela"
+ :base-url       "http://0.0.0.0:3000/"
+ :uploads        "./uploads"
+ :path           "/uploads/"}
