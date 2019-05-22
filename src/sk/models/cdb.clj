@@ -21,7 +21,6 @@
 (def alumnos-sql
   "CREATE TABLE `alumnos` (
                         `matricula` int(11) unsigned NOT NULL ,
-                        `matricula` varchar(15) DEFAULT NULL,
                         `password`  varchar(50) DEFAULT NULL,
                         `apell_paterno` varchar(100) DEFAULT NULL,
                         `apell_materno` varchar(100) DEFAULT NULL,
