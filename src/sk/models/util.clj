@@ -71,6 +71,7 @@
   (-> t str->jwt verify))
 
 (defn check-token [t]
+  "Checks if token verifes and it's not expired, returns matricula or nil"
   (let [token     (decode-token t)
         exp       (:exp token)
         cexp      (c/to-epoch (t/now))
