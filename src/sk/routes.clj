@@ -12,4 +12,8 @@
   (POST "/registrar" request [] (registro/registrar! request))
   (GET "/matricula/:matricula" [matricula] (registro/matricula matricula))
   (POST "/matricula" request [] (registro/matricula! request))
+  (GET "/rpaswd" request [] (registro/reset-password request))
+  (POST "/rpaswd" request [] (registro/reset-password! request))
+  (GET "/reset_password/:token" [token] (registro/reset-jwt token))
+  (POST "/reset_password" request [] (registro/reset-jwt! request))
   (GET "/logoff" request [] (home/logoff request)))
