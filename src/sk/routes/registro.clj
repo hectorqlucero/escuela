@@ -1,17 +1,18 @@
 (ns sk.routes.registro
   (:require [cheshire.core :refer [generate-string]]
-            [ring.handler.dump :refer :all]
             [noir.response :refer [redirect]]
             [noir.session :as session]
-            [selmer.parser :refer [render render-file]]
+            [selmer.parser :refer [render-file]]
             [sk.models.crud :refer [db Query Save Update]]
             [sk.models.email :refer [host send-email]]
-            [sk.models.util :refer [format-date-internal
-                                    get-matricula-id
-                                    capitalize-words
-                                    get-reset-url
-                                    create-token
-                                    check-token]]))
+            [sk.models.util
+             :refer
+             [capitalize-words
+              check-token
+              create-token
+              format-date-internal
+              get-matricula-id
+              get-reset-url]]))
 
 (defn buscar [request]
   (render-file "routes/buscar.html" {:title "Busqueda de Registro"
