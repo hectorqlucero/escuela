@@ -12,6 +12,15 @@
         <h4 class="mb-0"><span style="color:rgb(18,123,163);">{{ title }}</span></h4>
     </div>
     <form class="fm" method="post" {% if matricula %} action="/matricula" {% endif %} novalidate style="width:100%;background-color:#EFEFEF;">
+        <div id="foto-div" style="margin-top:auto;">
+
+        </div>
+        <div class="form-group col-10">
+            <div style="margin-bottom:20px;">
+                <input name="foto" id="foto" class="form-control easyui-filebox" data-options="prompt:'Escoje foto...',buttonText:'Escoje foto'" style="width:100%;bottom-margin:15px;">
+                <button onclick="uploadFile()" style="top-margin:10px;">Clic aqui para Subir foto!</button>
+            </div>
+        </div>
         {% include "routes/_registrar.html" %}
         <div class="form-group col-10">
             <a href="javascript:void(0)" class="btn btn-primary easyui-linkbutton" id="submit">Registrarse</a>
@@ -27,7 +36,31 @@
 {% script "/easyui/locale/easyui-lang-es.js" %}
 <script>
  $(document).ready(function() {
-     var row_exists = {% if matricula %} true {% else %} false {% endif %};
+   function uploadFile(){
+     var input = document.getElementById("file");
+     file = input.files[0];
+     if(file != undefined){
+       formData= new FormData();
+       if(!!file.type.match(/image.*/)){
+         formData.append("image", file);
+         $.ajax({
+           url: "upload.php",
+           type: "POST",
+           data: formData,
+           processData: false,
+           contentType: false,
+           success: function(data){
+             alert('success');
+           }
+         });
+       }else{
+         alert('Not a valid image!');
+       }
+     }else{
+       alert('Input something!');
+     }
+
+}    var row_exists = {% if matricula %} true {% else %} false {% endif %};
      if(row_exists) {
          $("form.fm").form('load', {{ row|safe }});
          $("#matricula").textbox('readonly',true);
