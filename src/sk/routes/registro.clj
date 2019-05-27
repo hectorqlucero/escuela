@@ -3,7 +3,8 @@
             [noir.response :refer [redirect]]
             [noir.session :as session]
             [selmer.parser :refer [render-file]]
-            [sk.models.crud :refer [db Query Save Update]]
+            [clojure.java.io :as io]
+            [sk.models.crud :refer [db Query Save Update config]]
             [sk.models.email :refer [host send-email]]
             [sk.models.util
              :refer
@@ -12,7 +13,21 @@
               create-token
               format-date-internal
               get-matricula-id
+              get-photo
               get-reset-url]]))
+
+(def UPLOADS (str (config :uploads) "/"))
+
+(defn upload-photo [file matricula]
+  (let [tempfile  (:tempfile file)
+        size      (:size file)
+        type      (:content-type file)
+        extension (peek (clojure.string/split type #"\/"))
+        extension (if (= extension "jpeg") "jpg" "jpg")
+        foto      (str matricula "." extension)
+        result    (if-not (zero? size)
+                    (do (io/copy tempfile (io/file (str UPLOADS foto)))))]
+    foto))
 
 (defn buscar [request]
   (render-file "routes/buscar.html" {:title "Busqueda de Registro"
@@ -33,7 +48,8 @@
   (if (get-matricula-id)
     (redirect "/")
     (render-file "routes/registrar.html" {:title "Registro De Alumno"
-                                          :matricula nil})))
+                                          :matricula nil
+                                          :foto (get-photo "alumnos" "foto" "matricula" nil)})))
 
 (defn create-data [params]
   {:matricula     (:matricula params)
@@ -51,7 +67,9 @@
 
 (defn registrar! [{params :params}]
   (let [matricula (or (:matricula params) "0")
-        postvars  (assoc (create-data params) :matricula matricula)
+        file      (:file params)
+        foto      (upload-photo file matricula)
+        postvars  (assoc (create-data params) :matricula matricula :foto foto)
         result    (Save db :alumnos postvars ["matricula = ?" matricula])]
     (if (seq result)
       (do
@@ -82,12 +100,15 @@
   (let [row (first (Query db [matricula-sql matricula]))]
     (render-file "routes/matricula.html" {:title "Registro De Alumno"
                                           :matricula matricula
+                                          :foto (get-photo "alumnos" "foto" "matricula" matricula)
                                           :row (generate-string row)})))
 ;; End matricula
 
 (defn matricula! [{params :params}]
   (let [matricula (or (:matricula params) "0")
-        postvars  (assoc (create-data params) :matricula matricula)
+        file      (:file params)
+        foto      (upload-photo file matricula)
+        postvars  (assoc (create-data params) :matricula matricula :foto foto)
         result    (Save db :alumnos postvars ["matricula = ?" matricula])]
     (if (seq result)
       (do

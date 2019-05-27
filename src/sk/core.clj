@@ -48,10 +48,9 @@
 
 (defroutes protected-routes
   admin-routes)
-
+(def root (str (System/getProperty "user.dif") "/public"))
 (defroutes app-routes
   (route/resources "/")
-  (route/files "/uploads/" {:root (:uploads config)})
   (route/not-found "Not Found"))
 
 (defn -main []

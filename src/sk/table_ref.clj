@@ -32,8 +32,13 @@
         years  (concat pyears nyears)]
     years))
 
+(defn photo [id]
+  (let [foto (slurp (str "./uploads/" id))]
+    (str "<img src='/uploads/" id "' height='79' width='91'/>")))
+
 (defroutes table_ref-routes
   (GET "/table_ref/get_users" [] (generate-string (Query db [get_users-sql])))
   (GET "/table_ref/alumnos/:matricula" [matricula] (generate-string (get-alumno matricula)))
   (GET "/table_ref/months" [] (generate-string (months)))
-  (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (years pyears nyears))))
+  (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (years pyears nyears)))
+  (GET "/table_ref/photo/:id" [id] (photo id)))

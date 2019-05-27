@@ -2,6 +2,7 @@
 /classes
 /checkouts
 /resources/private/
+/uploads/
 profiles.clj
 pom.xml
 pom.xml.asc

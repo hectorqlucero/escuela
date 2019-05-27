@@ -11,7 +11,17 @@
     <div class="card-header">
         <h4 class="mb-0"><span style="color:rgb(18,123,163);">{{ title }}</span></h4>
     </div>
-    <form id="mf" class="fm" method="post" action="/matricula" novalidate style="width:100%;background-color:#EFEFEF;">
+    <form id="mf" class="fm" enctype="multipart/form-data" method="post" action="/matricula" novalidate style="width:100%;background-color:#EFEFEF;">
+        <div id="foto-div" style="margin-left:15px;">
+            <p>
+                {{ foto|safe }}
+            </p>
+        </div>
+        <div class="form-group col-10">
+            <div style="margin-bottom:20px;">
+                <input name="file" id="file" class="form-control easyui-filebox" data-options="prompt:'Escoje foto...',buttonText:'Escoje foto'" style="width:100%;bottom-margin:15px;">
+            </div>
+        </div>
         {% include "routes/_registrar.html" %}
         <div class="form-group col-10">
             <a href="javascript:void(0)" class="btn btn-primary easyui-linkbutton" id="submit">Actualizar</a>
@@ -45,6 +55,22 @@
                  }
              }
          });
+     });
+
+     $("#foto").filebox({
+         onChange: function() {
+             var matricula = $("#matricula").textbox('getValue');
+             var f  = $(this).next().find('.textbox-value');
+             var filelist = f[0].files;
+             var name = filelist[0]['name'];
+             var size = filelist[0]['size'];
+             var type = filelist[0]['type'];
+             console.log('matricula: ' + matricula);
+             console.log('Name: ' + name);
+             console.log('Size: ' + size);
+             console.log('Type: ' + type);
+             return console.log(f[0].files);
+         }
      });
  });
 </script>
