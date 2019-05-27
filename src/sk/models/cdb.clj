@@ -32,6 +32,7 @@
                         `fecha_ingreso` date DEFAULT NULL,
                         `fecha_egreso` date DEFAULT NULL,
                         `email` varchar(100) DEFAULT NULL,
+                        `foto` varchar(100) DERAULT NULL,
                         PRIMARY KEY (`matricula`)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 
