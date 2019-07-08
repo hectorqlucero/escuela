@@ -8,7 +8,7 @@
             [selmer.parser :refer [render-file]]))
 
 (defn main [request]
-  (render-file "routes/main.html" {:title "Este es mi software"}))
+  (render-file "routes/main.html" {:title "Welcome to the Jungle!"}))
 
 (defn login [_]
   (if-not (nil? (get-session-id))
@@ -27,7 +27,7 @@
           (generate-string {:error "Hay problemas para accesar el sitio!"})))
       (generate-string {:error "El usuario esta inactivo!"}))))
 
-(defn logoff [_]
+(defn logoff []
   (session/clear!)
   (redirect "/"))
 

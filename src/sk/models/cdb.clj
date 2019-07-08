@@ -18,24 +18,6 @@
   PRIMARY KEY (id)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 
-(def alumnos-sql
-  "CREATE TABLE `alumnos` (
-                        `matricula` int(11) unsigned NOT NULL ,
-                        `password`  varchar(50) DEFAULT NULL,
-                        `apell_paterno` varchar(100) DEFAULT NULL,
-                        `apell_materno` varchar(100) DEFAULT NULL,
-                        `nombre` varchar(100) DEFAULT NULL,
-                        `escuela` varchar(100) DEFAULT NULL,
-                        `carrera` varchar(100) DEFAULT NULL,
-                        `semestre` int(11) DEFAULT NULL,
-                        `status` char(1) DEFAULT NULL COMMENT 'E=estudiante, G=Egresado',
-                        `fecha_ingreso` date DEFAULT NULL,
-                        `fecha_egreso` date DEFAULT NULL,
-                        `email` varchar(100) DEFAULT NULL,
-                        `foto` varchar(100) DERAULT NULL,
-                        PRIMARY KEY (`matricula`)
-                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-
 (def user-rows
   [{:lastname  "Lucero"
     :firstname "Hector"
@@ -57,21 +39,18 @@
 (defn create-database []
   "Creates database and a default admin users"
   (Query! db users-sql)
-  (Query! db alumnos-sql)
   (Insert-multi db :users user-rows))
 
 (defn reset-database []
   "Removes existing tables and re-creates them"
   (Query! db "DROP table IF EXISTS users")
-  (Query! db "DROP table IF EXISTS alumnos")
   (Query! db users-sql)
-  (Query! db alumnos-sql)
   (Insert-multi db :users user-rows))
 
 (defn migrate []
   "Migrate by the seat of my pants"
-  (Query! db "DROP table IF EXISTS alumnos")
-  (Query! db alumnos-sql))
+  (Query! db "DROP table IF EXISTS users")
+  (Query! db users-sql)
+  (Insert-multi db :users user-rows))
 
-;;(migrate)
 ;;(create-database)

@@ -2,8 +2,6 @@
   (:require [sk.models.crud :refer :all]
             [clj-time.core :as t]
             [clj-time.format :as f]
-            [clj-time.coerce :as c]
-            [clj-jwt.core :refer :all]
             [clojure.string :refer [join]]
             [clojurewerkz.money.amounts :as ma]
             [clojurewerkz.money.currencies :as mc]
@@ -54,58 +52,9 @@
 
 (def external-time-parser (f/formatter tz "hh:mm:ss a" "H:k:s"))
 
-(defn get-base-url [request]
-  (str (subs (str (:scheme request)) 1) "://" (:server-name request) ":" (:server-port request)))
-
-(defn get-reset-url [request token]
-  (str (get-base-url request) "/reset_password/" token))
-
-;; Start jwt token
-(defn create-token [k]
-  "Creates jwt token with 10 minutes expiration time"
-  (let [data {:iss k
-              :exp (t/plus (t/now) (t/minutes 10))
-              :iat (t/now)}]
-    (-> data jwt to-str)))
-
-(defn decode-token [t]
-  "Decodes jwt token"
-  (-> t str->jwt :claims))
-
-(defn verify-token [t]
-  "Verifies that token is good"
-  (-> t str->jwt verify))
-
-(defn check-token [t]
-  "Checks if token verifes and it's not expired, returns matricula or nil"
-  (let [token     (decode-token t)
-        exp       (:exp token)
-        cexp      (c/to-epoch (t/now))
-        matricula (:iss token)]
-    (if (and (verify-token t) (> exp cexp))
-      matricula
-      nil)))
-;; End jwt token
-
-(defn parse-int [s]
-  "Attempt to convert to integer or on error return nil or itself if it's already an integer"
-  (try
-    (Integer. s)
-    (catch Exception _ (if (integer? s) s nil))))
-
 (defn get-session-id []
   (try
     (session/get :user_id)
-    (catch Exception e nil)))
-
-(defn get-matricula-id []
-  (try
-    (session/get :matricula)
-    (catch Exception e nil)))
-
-(defn get-authenticated []
-  (try
-    (session/get :is_authenticated)
     (catch Exception e nil)))
 
 (defn current_date []
@@ -220,6 +169,12 @@
 (defn merge-maps [k & m]
   "k = keyword ex. :id, m= list of maps.  ex. (merge-maps :id a b)"
   (map #(apply merge %) (vals (group-by k (apply concat m)))))
+
+(defn parse-int [s]
+  "Attempt to convert to integer or on error return nil or itself if it's already an integer"
+  (try
+    (Integer. s)
+    (catch Exception _ (if (integer? s) s nil))))
 
 (defn in?
   "true if coll contains elm"
