@@ -1,0 +1,54 @@
+{% csrf-field %}
+<div class="form-group col-10">
+    <label for="matricula">Matricula:</label>
+    <input name="matricula" class="form-control easyui-textbox" id="matricula" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="password">Contraseña:</label>
+    <input name="password" class="form-control easyui-passwordbox" id="password">
+</div>
+<div class="form-group col-10">
+    <label for="apell_paterno">Apellido Paterno:</label>
+    <input name="apell_paterno" class="form-control easyui-textbox" id="apell_paterno" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="apell_materno">Apellido materno:</label>
+    <input name="apell_materno" class="form-control easyui-textbox" id="apell_materno" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="nombre">Nombre:</label>
+    <input name="nombre" class="form-control easyui-textbox" id="nombre" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="escuela">Escuela:</label>
+    <input name="escuela" class="form-control easyui-textbox" id="escuela" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="carrera">Carrera:</label>
+    <input name="carrera" class="form-control easyui-textbox" id="carrera" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="semestre">Semestre:</label>
+    <input name="semestre" class="form-control easyui-textbox" id="semestre" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="status">Status:</label>
+    <div style="margin-bottom:20px">
+        <input class ="easyui-radiobutton" name="status" value="A" label="Alumno">
+    </div>
+    <div style="margin-bottom:20px">
+        <input class ="easyui-radiobutton" name="status" value="E" label="Egresado">
+    </div>
+</div>
+<div class="form-group col-10">
+    <label for="fecha_ingreso">Fecha de Ingreso:</label>
+    <input name="fecha_ingreso" class="form-control easyui-datebox" id="fecha_ingreso" data-options="required: true">
+</div>
+<div class="form-group col-10">
+    <label for="fecha_egreso">Fecha de Egreso:</label>
+    <input name="fecha_egreso" class="form-control easyui-datebox" id="fecha_egreso" data-options="required: false">
+</div>
+<div class="form-group col-10">
+    <label for="email">Correo Electronico:</label>
+    <input name="email" class="form-control easyui-validatebox" id="email" data-options="required: true,validType:'email'">
+</div>
