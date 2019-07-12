@@ -19,6 +19,9 @@
 (set-resource-path! (clojure.java.io/resource "templates"))
 (add-filter! :format-title (fn [x] [:safe (clojure.string/replace x #"'" "&#145;")]))
 (add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
+(add-tag! :matricula
+          (fn [_ _]
+            (str (if (session/get :matricula) (:matricula (first (Query db ["SELECT matricula FROM alumnos WHERE matricula=?" (session/get :matricula)]))) "Anonimo"))))
 (add-tag! :username
           (fn [_ _]
             (str (if (session/get :user_id) (:username (first (Query db ["select username from users where id=?" (session/get :user_id)]))) "Anonimo"))))
