@@ -17,7 +17,7 @@
                  [clojurewerkz/money "1.10.0"]
                  [org.clojure/java.jdbc "0.7.9"]
                  [org.clojure/data.codec "0.1.1"]
-                 [mysql/mysql-connector-java "8.0.16"]
+                 [mysql/mysql-connector-java "8.0.17"]
                  [selmer "1.12.12" :exclusions [commons-codec]]
                  [inflections "0.13.2" :exclusions [commons-codec]]]
   :main sk.handler
