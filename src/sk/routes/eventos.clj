@@ -47,15 +47,6 @@
                                         :erows erows})))
 ;; End eventos
 
-;; Start mapa
-(def mapa-sql
-  "SELECT mapa FROM eventos WHERE id = ?")
-
-(defn mapa [evento_id]
-  (let [row (first (Query db [mapa-sql evento_id]))]
-    (render-file "routes/mapa.html" {:html (:mapa row)})))
-;; End mapa
-
 ;; Start processar
 (def matricula-sql
   "SELECT
