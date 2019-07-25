@@ -66,6 +66,11 @@
    AND
    matricula_id = ?")
 
+(defn valid-matricula [matricula_id]
+  (let [record (first (Query db ["SELECT matricula FROM alumnos WHERE matricula = ?" matricula_id]))
+        result (if (seq record) 1 nil)]
+    result))
+
 (defn matricula-exists [matricula_id eventos_id]
   "Revisar si existen datos pertinentes en la tabla registro_evento"
   (if (seq (first (Query db [matricula-sql eventos_id matricula_id]))) 1 nil))
@@ -96,10 +101,17 @@
   (let [row (first (Query db [matricula-sql eventos_id matricula_id]))
         data-exists (matricula-exists matricula_id eventos_id)
         start-exists (evento-start-check row)
-        result (if (nil? data-exists)
-                 (crear matricula_id eventos_id)
-                 (actualizar matricula_id eventos_id start-exists))]
+        valid-alumno (valid-matricula matricula_id)
+        error (if (nil? valid-alumno)
+                "Matricula no existe!"
+                "Fallo registro!")
+        result (if-not (nil? valid-alumno)
+                 (do
+                   (if (nil? data-exists)
+                     (crear matricula_id eventos_id)
+                     (actualizar matricula_id eventos_id start-exists)))
+                 nil)]
     (if (seq result)
       (generate-string {:success "Registro processado!"})
-      (generate-string {:error "No se pudo registrar!"}))))
+      (generate-string {:error error}))))
 ;; End processar
