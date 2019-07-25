@@ -19,7 +19,9 @@
     {% block loader_head %} {% style "/css/loader.css" %} {% endblock %}
 </head>
 
+{% block body-start %}
 <body>
+{% endblock %}
     <!-- Lodader container -->
     {% block loader_container %}
     <div class="loader"></div>
@@ -52,6 +54,8 @@
         });
     </script>
     {% endblock %}
+{% block body-end %}
 </body>
+{% endblock %}
 
 </html>

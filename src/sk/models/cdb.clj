@@ -28,7 +28,8 @@
     :nombre "Marco"
     :escuela "UABC"
     :carrera "Ciencias Computacionales"
-    :status "G"
+    :semestre "0"
+    :status "E"
     :fecha_ingreso "1990-01-01"
     :email "marcopescador@hotmail.com"
     }
@@ -39,9 +40,40 @@
     :nombre "Hector"
     :escuela "LBSU"
     :carrera "Ciencias Computacionaels"
-    :status "G"
+    :semestre "0"
+    :status "E"
     :fecha_ingreso "1976-09-01"
     :email "hectorqlucero@gmail.com"}])
+
+(def categorias-rows
+  [{:id "1"
+    :categoria "Capacitación"
+    }
+   {:id "2"
+    :categoria "Conferencias"
+    }
+   {:id "3"
+    :categoria "Cursos"
+    }
+   {:id "4"
+    :categoria "Platicas"
+    }
+   {:id "5"
+    :categoria "Talleres"}
+   {:id "6"
+    :categoria "Tutorias"}])
+
+(def eventos-rows
+  [{:id "1"
+    :categorias_id "2"
+    :descripcion "Conferencia Odontologia por el expositor Margarito Lopez, en el cual se hablara de los nuevos tratamientos odontologicos y las nuevas tecnologias que se aplicaran en estas modalidades."
+    :fecha_inicio "2019-07-23"
+    :hora_inicio "08:00"
+    :lugar "Edificio de Vi-serectoria aula magna # 1"
+    :titulo "Nuevas tecnologias para la odontologia"
+    :fecha_terminacion "2019-07-23"
+    :hora_terminacion "12:00"
+    }])
 
 (def users-sql
   "CREATE TABLE users (
@@ -69,7 +101,7 @@
    escuela varchar(100) DEFAULT NULL,
    carrera varchar(100) DEFAULT NULL,
    semestre int(11) DEFAULT NULL,
-   status char(1) DEFAULT NULL COMMENT 'E=estudiante, G=Egresado',
+   status char(1) DEFAULT NULL COMMENT 'A=Alumno, E=Egresado',
    fecha_ingreso date DEFAULT NULL,
    fecha_egreso date DEFAULT NULL,
    email varchar(100) DEFAULT NULL,
@@ -93,7 +125,6 @@
    hora_inicio time DEFAULT NULL,
    imagen varchar(100) DEFAULT NULL,
    lugar varchar(100) DEFAULT NULL,
-   mapa text DEFAULT NULL,
    titulo varchar(250) DEFAULT NULL,
    fecha_terminacion date DEFAULT NULL,
    hora_terminacion time DEFAULT NULL,
@@ -136,12 +167,17 @@
   (Query! db "DROP table IF EXISTS registro_evento")
   (Query! db registro_evento-sql))
 
-(def migrate-sql)
 
 (defn migrate []
   "Migrate by the seat of my pants"
   (Query! db "DROP table IF EXISTS alumnos")
   (Query! db alumnos-sql)
-  (Insert-multi db :alumnos alumnos-rows))
+  (Insert-multi db :alumnos alumnos-rows)
+  (Query! db "DROP table IF EXISTS categorias")
+  (Query! db categorias-sql)
+  (Insert-multi db :categorias categorias-rows)
+  (Query! db "DROP table IF EXISTS eventos")
+  (Query! db eventos-sql)
+  (Insert-multi db :eventos eventos-rows))
 
 ;;(migrate)

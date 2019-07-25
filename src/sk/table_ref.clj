@@ -1,7 +1,7 @@
 (ns sk.table_ref
   (:require [cheshire.core :refer [generate-string]]
             [sk.models.crud :refer [db Query]]
-            [sk.models.util :refer [parse-int current_year]]
+            [sk.models.util :refer [parse-int current_year current_time]]
             [compojure.core :refer [defroutes GET]]))
 
 (def get_users-sql
@@ -36,4 +36,5 @@
   (GET "/table_ref/get_users" [] (generate-string (Query db [get_users-sql])))
   (GET "/table_ref/alumnos/:matricula" [matricula] (generate-string (get-alumno matricula)))
   (GET "/table_ref/months" [] (generate-string (months)))
+  (GET "/table_ref/clock" [] (current_time))
   (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (years pyears nyears))))
