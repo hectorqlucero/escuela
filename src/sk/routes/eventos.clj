@@ -58,6 +58,7 @@
    matricula_id = ?")
 
 (defn valid-matricula [matricula_id]
+  "Revisar si existe un alumno con la matricula especificiada"
   (let [record (first (Query db ["SELECT matricula FROM alumnos WHERE matricula = ?" matricula_id]))
         result (if (seq record) 1 nil)]
     result))
