@@ -1,5 +1,5 @@
-(ns sk.models.cdb
-  (:require [sk.models.crud :refer :all]
+(ns escuela.models.cdb
+  (:require [escuela.models.crud :refer :all]
             [noir.util.crypt :as crypt]))
 
 (def user-rows

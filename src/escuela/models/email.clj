@@ -1,6 +1,6 @@
-(ns sk.models.email
+(ns escuela.models.email
   (:require [postal.core :refer [send-message]]
-            [sk.models.crud :refer [config]]))
+            [escuela.models.crud :refer [config]]))
 
 ;;(send-message {:host "email-host"
 ;;               :user "email-user"

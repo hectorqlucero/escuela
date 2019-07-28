@@ -1,14 +1,18 @@
-(ns sk.routes
+(ns escuela.routes
   (:require [compojure.core :refer [defroutes GET POST]]
-            [sk.table_ref :refer [table_ref-routes]]
-            [sk.routes.home :as home]
-            [sk.routes.registro :as registro]
-            [sk.routes.eventos :as eventos]))
+            [escuela.table_ref :refer [table_ref-routes]]
+            [escuela.routes.home :as home]
+            [escuela.routes.registro :as registro]
+            [escuela.routes.eventos :as eventos]))
 
-(defroutes sk-routes
+(defroutes escuela-routes
   table_ref-routes
   (GET "/" request [] (registro/buscar request))
   (POST "/" request [] (registro/buscar! request))
+  (GET "/admin" request [] (home/main request))
+  (GET "/admin/login" request [] (home/login request))
+  (POST "/admin/login" [username password] (home/login! username password))
+  (GET "/admin/logoff" request [] (home/logoff request))
   (GET "/registrar" request [] (registro/registrar request))
   (POST "/registrar" request [] (registro/registrar! request))
   (GET "/matricula/:matricula" [matricula] (registro/matricula matricula))

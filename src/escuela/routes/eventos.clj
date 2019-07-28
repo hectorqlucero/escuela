@@ -1,10 +1,10 @@
-(ns sk.routes.eventos
+(ns escuela.routes.eventos
   (:require [cheshire.core :refer [generate-string]]
             [noir.response :refer [redirect]]
             [noir.session :as session]
             [selmer.parser :refer [render-file]]
-            [sk.models.crud :refer [db Query Save Update]]
-            [sk.models.util :refer [get-matricula-id
+            [escuela.models.crud :refer [db Query Save Update]]
+            [escuela.models.util :refer [get-matricula-id
                                     current_time_internal
                                     today-internal]]))
 

@@ -1,5 +1,5 @@
-(ns sk.models.util
-  (:require [sk.models.crud :refer :all]
+(ns escuela.models.util
+  (:require [escuela.models.crud :refer :all]
             [clj-time.core :as t]
             [clj-time.format :as f]
             [clj-jwt.core :refer :all]
@@ -486,18 +486,27 @@
     nil
     ((keyword field-name) (first (Query db (str "SELECT " field-name " FROM " table-name " WHERE " id-name " = " id-value))))))
 
-(defn build-photo-html [photo-val uuid]
+(defn build-photo-html [photo-val uuid path]
   (if (or
        (nil? photo-val)
        (nil? uuid))
     nil
-    (str "<img src='" (:path config)  photo-val "?t=" uuid "' onError=\"this.src='/images/placeholder_profile.png'\" width='95' height='71'></img>")))
+    (str "<img src='" path  photo-val "?t=" uuid "' onError=\"this.src='/images/placeholder_profile.png'\" width='95' height='71'></img>")))
 
 (defn get-photo [table-name field-name id-name id-value]
   (let [photo-val   (get-photo-val table-name field-name id-name id-value)
         uuid        (str (UUID/randomUUID))
         placeholder "<img src='/images/placeholder_profile.png' width='95' height='71'></img>"
-        photo       (build-photo-html photo-val uuid)]
+        path (:path config)
+        photo       (build-photo-html photo-val uuid path)]
+    (if (empty? photo-val) placeholder photo)))
+
+(defn get-imagen [table-name field-name id-name id-value]
+  (let [photo-val (get-photo-val table-name field-name id-name id-value)
+        uuid (str (UUID/randomUUID))
+        placeholder "<img src='/images/placeholder_profile.png' width='95' height='71'></img>"
+        path (str (:path config) "eventos/")
+        photo (build-photo-html photo-val uuid path)]
     (if (empty? photo-val) placeholder photo)))
 
 (defn get-thumbnail [photo-val]

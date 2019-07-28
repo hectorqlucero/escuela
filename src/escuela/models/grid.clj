@@ -1,6 +1,6 @@
-(ns sk.models.grid
-  (:require [sk.models.crud :refer [db Query]]
-            [sk.models.util :refer [parse-int]]))
+(ns escuela.models.grid
+  (:require [escuela.models.crud :refer [db Query]]
+            [escuela.models.util :refer [parse-int]]))
 
 (defn convert-search-columns [fields]
   (let [fields (map #(str "COALESCE(" % ",'')") fields)]

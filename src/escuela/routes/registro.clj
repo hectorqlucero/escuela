@@ -1,12 +1,12 @@
-(ns sk.routes.registro
+(ns escuela.routes.registro
   (:require [cheshire.core :refer [generate-string]]
             [noir.response :refer [redirect]]
             [noir.session :as session]
             [selmer.parser :refer [render-file]]
             [clojure.java.io :as io]
-            [sk.models.crud :refer [db Query Save Update config]]
-            [sk.models.email :refer [host send-email]]
-            [sk.models.util
+            [escuela.models.crud :refer [db Query Save Update config]]
+            [escuela.models.email :refer [host send-email]]
+            [escuela.models.util
              :refer
              [capitalize-words
               check-token

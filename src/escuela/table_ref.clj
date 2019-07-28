@@ -1,11 +1,17 @@
-(ns sk.table_ref
+(ns escuela.table_ref
   (:require [cheshire.core :refer [generate-string]]
-            [sk.models.crud :refer [db Query]]
-            [sk.models.util :refer [parse-int current_year current_time]]
+            [escuela.models.crud :refer [db Query]]
+            [escuela.models.util :refer [parse-int 
+                                         current_year 
+                                         current_time
+                                         get-imagen]]
             [compojure.core :refer [defroutes GET]]))
 
 (def get_users-sql
   "SELECT id AS value, concat(firstname,' ',lastname) AS text FROM users order by firstname,lastname")
+
+(def get-categorias-sql
+  "SELECT id AS value, categoria AS text FROM categorias order by categoria")
 
 (defn get-alumno [matricula]
   (:matricula (first (Query db ["SELECT matricula FROM alumnos WHERE matricula = ?" matricula]))))
@@ -34,6 +40,8 @@
 
 (defroutes table_ref-routes
   (GET "/table_ref/get_users" [] (generate-string (Query db [get_users-sql])))
+  (GET "/table_ref/get_categorias" [] (generate-string (Query db [get-categorias-sql])))
+  (GET "/table_ref/get_imagen/:id" [id] (get-imagen "eventos" "imagen" "id" id))
   (GET "/table_ref/alumnos/:matricula" [matricula] (generate-string (get-alumno matricula)))
   (GET "/table_ref/months" [] (generate-string (months)))
   (GET "/table_ref/clock" [] (current_time))

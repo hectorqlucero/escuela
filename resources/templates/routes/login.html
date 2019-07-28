@@ -6,6 +6,10 @@
 {% style "/easyui/themes/color.css" %}
 {% endblock %}
 
+{% block navbar_content %}
+{% include "amenus.html" %}
+{% endblock %}
+
 {% block content %}
 <div class="container col-8">
     <div class="card-header">
@@ -46,6 +50,7 @@
             success: function(data) {
                 try {
                     var dta = JSON.parse(data);
+                    console.log("dta: " + dta);
                     if(dta.hasOwnProperty('url')) {
                         window.location.href = dta.url;
                     } else if(dta.hasOwnProperty('error')) {

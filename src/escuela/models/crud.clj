@@ -1,4 +1,4 @@
-(ns sk.models.crud
+(ns escuela.models.crud
   (:require [clojure.java.io :as io]
             [clojure.java.jdbc :as j]))
 
