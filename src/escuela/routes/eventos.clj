@@ -23,7 +23,7 @@
    TIME_FORMAT(eventos.hora_terminacion, '%r') as hora_terminacion
    FROM eventos
    JOIN categorias on categorias.id = eventos.categorias_id
-   WHERE CURDATE() BETWEEN eventos.fecha_inicio AND eventos.fecha_terminacion")
+   WHERE eventos.id = ?")
 
 (def registro_evento-sql
   "SELECT
@@ -36,10 +36,10 @@
    LEFT JOIN eventos on eventos.id = registro_evento.eventos_id
    WHERE registro_evento.matricula_id = ?")
 
-(defn eventos [request]
+(defn eventos [eventos_id]
   (let [title "Eventos"
         matricula (get-matricula-id)
-        row (first (Query db eventos-sql))
+        row (first (Query db [eventos-sql eventos_id]))
         erows (Query db [registro_evento-sql matricula])]
     (render-file "routes/eventos.html" {:title title
                                         :matricula matricula

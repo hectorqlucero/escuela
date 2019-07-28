@@ -22,6 +22,6 @@
   (GET "/reset_password" request [] (registro/reset-jwt! request))
   (POST "/reset_password" request [] (registro/reset-jwt! request))
   (GET "/r_alumnos" request [] (registro/r-alumnos request))
-  (GET "/eventos" request [] (eventos/eventos request))
+  (GET "/eventos/:eventos_id" [eventos_id] (eventos/eventos eventos_id))
   (GET "/eventos/processar/:matricula_id/:eventos_id" [matricula_id eventos_id] (eventos/processar matricula_id eventos_id))
   (GET "/logoff" request [] (registro/logoff request)))
