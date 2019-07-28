@@ -58,10 +58,11 @@
 <div class="easyui-dialog dlg" data-options="closed: true, buttons: '#dlg-buttons'" style="padding: 5px;width:70%;">
   <form class="fm" method="POST" enctype="multipart/form-data" novalidate>
     <input type="hidden" id="id"  name="id">
+    <input type="hidden" id="imagen" name="imagen">
     <div class="form-group col-11">
       <div style="margin-bottom:20px;">
         <img id="image1" width="95" height="71"/>
-        <input id="imagen" class="easyui-filebox" name="imagen" style="width:300px" data-options="
+        <input id="file" class="easyui-filebox" name="file" style="width:300px" data-options="
                    prompt:'Escoje imagen...',
                    buttonText:'Escoje imagen...',
                    onChange: function(value){

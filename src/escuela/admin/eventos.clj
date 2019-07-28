@@ -57,6 +57,7 @@
 ;; Start eventos form
 (def eventos-form-sql
   "SELECT id as id,
+   imagen,
    categorias_id,
    descripcion,
    DATE_FORMAT(fecha_inicio,'%m/%d/%Y') as fecha_inicio,
@@ -70,8 +71,7 @@
 
 (defn form-eventos [id]
   (try
-    (let [row (first (Query db [eventos-form-sql id]))
-          row (assoc row :imagen (get-imagen "eventos" "imagen" "id" id))]
+    (let [row (first (Query db [eventos-form-sql id]))]
       (generate-string row))
     (catch Exception e (.getMessage e))))
 ;; End eventos form
@@ -85,7 +85,7 @@
         type      (:content-type file)
         extension (peek (clojure.string/split type #"\/"))
         extension (if (= extension "jpeg") "jpg" "jpg")
-        foto      (str id "." extension)
+        foto      (:filename file)
         result    (if-not (zero? size)
                     (do (io/copy tempfile (io/file (str UPLOADS foto)))))]
     foto))
@@ -102,8 +102,10 @@
 
 (defn form-eventos! [{params :params}]
   (let [id (or (:id params) "0")
-        file (:imagen params)
-        imagen (upload-imagen file id)
+        file (:file params)
+        imagen (if-not (zero? (:size file))
+                 (upload-imagen file id)
+                 (:imagen params))
         postvars (assoc (create-data params) :id id :imagen imagen)
         result (Save db :eventos postvars ["id = ?" id])]
     (if (seq result)
