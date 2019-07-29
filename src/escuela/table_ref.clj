@@ -17,6 +17,9 @@
 (defn get-alumno [matricula]
   (:matricula (first (Query db ["SELECT matricula FROM alumnos WHERE matricula = ?" matricula]))))
 
+(defn get-users [email]
+  (:email (first (Query db ["SELECT email FROM users WHERE email = ?" email]))))
+
 (defn months []
   (list
    {:value 1 :text "Enero"}
@@ -65,6 +68,7 @@
   (GET "/table_ref/get_categorias" [] (generate-string (Query db [get-categorias-sql])))
   (GET "/table_ref/get_imagen/:id" [id] (get-imagen "eventos" "imagen" "id" id))
   (GET "/table_ref/alumnos/:matricula" [matricula] (generate-string (get-alumno matricula)))
+  (GET "/table_ref/users/:email" [email] (get-users email))
   (GET "/table_ref/months" [] (generate-string (months)))
   (GET "/table_ref/clock" [] (current_time))
   (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (years pyears nyears)))

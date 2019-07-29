@@ -2,6 +2,7 @@
   (:require [compojure.core :refer [defroutes GET POST]]
             [escuela.table_ref :refer [table_ref-routes]]
             [escuela.routes.home :as home]
+            [escuela.admin.home :as ahome]
             [escuela.routes.registro :as registro]
             [escuela.routes.eventos :as eventos]))
 
@@ -24,4 +25,6 @@
   (GET "/r_alumnos" request [] (registro/r-alumnos request))
   (GET "/eventos/:eventos_id" [eventos_id] (eventos/eventos eventos_id))
   (GET "/eventos/processar/:matricula_id/:eventos_id" [matricula_id eventos_id] (eventos/processar matricula_id eventos_id))
+  (GET "/admin/registrar" request [] (ahome/registrar request))
+  (POST "/admin/registrar" request [] (ahome/registrar! request))
   (GET "/logoff" request [] (registro/logoff request)))
