@@ -150,6 +150,7 @@
    JOIN eventos on eventos.id = registro_evento.eventos_id
    WHERE
    registro_evento.eventos_id = ?")
+
 (defn registrados-eventos [eventos_id]
   (render-file "admin/reventos.html" {:title "Registrados"
                                       :rows (Query db [registrados-sql eventos_id])}))
