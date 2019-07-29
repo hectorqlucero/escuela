@@ -1,5 +1,6 @@
 (ns escuela.table_ref
   (:require [cheshire.core :refer [generate-string]]
+            [selmer.parser :refer [render-file]]
             [escuela.models.crud :refer [db Query]]
             [escuela.models.util :refer [parse-int 
                                          current_year 
@@ -38,6 +39,27 @@
         years  (concat pyears nyears)]
     years))
 
+;; Start get-registrados
+(def get-registrados-sql
+  "SELECT
+   alumnos.nombre,
+   alumnos.apell_paterno,
+   alumnos.apell_materno,
+   eventos.titulo,
+   DATE_FORMAT(registro_evento.fecha, '%d/%m/%Y') as fecha,
+   TIME_FORMAT(registro_evento.hora_entrada,'%H:%i %p') as hora_entrada,
+   TIME_FORMAT(registro_evento.hora_salida,'%H:%i %p') as hora_salida
+   FROM registro_evento
+   JOIN alumnos on alumnos.matricula = registro_evento.matricula_id
+   JOIN eventos on eventos.id = registro_evento.eventos_id
+   WHERE
+   registro_evento.eventos_id = ?")
+
+(defn get-registrados [eventos_id]
+  (render-file "admin/reventos.html" {:title "Registrados"
+                                      :rows (Query db [get-registrados-sql eventos_id])}))
+;; End get-registrados
+
 (defroutes table_ref-routes
   (GET "/table_ref/get_users" [] (generate-string (Query db [get_users-sql])))
   (GET "/table_ref/get_categorias" [] (generate-string (Query db [get-categorias-sql])))
@@ -45,4 +67,5 @@
   (GET "/table_ref/alumnos/:matricula" [matricula] (generate-string (get-alumno matricula)))
   (GET "/table_ref/months" [] (generate-string (months)))
   (GET "/table_ref/clock" [] (current_time))
-  (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (years pyears nyears))))
+  (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (years pyears nyears)))
+  (GET "/table_ref/get_registrados/:eventos_id" [eventos_id] (get-registrados eventos_id)))

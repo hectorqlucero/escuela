@@ -3,7 +3,7 @@
             [noir.response :refer [redirect]]
             [noir.session :as session]
             [selmer.parser :refer [render-file]]
-            [escuela.models.crud :refer [db Query Save Update]]
+            [escuela.models.crud :refer [db Query Save Update config]]
             [escuela.models.util :refer [get-matricula-id
                                     current_time_internal
                                     today-internal]]))
@@ -43,6 +43,7 @@
         erows (Query db [registro_evento-sql matricula])]
     (render-file "routes/eventos.html" {:title title
                                         :matricula matricula
+                                        :path (str (:path config) "eventos/")
                                         :row row
                                         :erows erows})))
 ;; End eventos

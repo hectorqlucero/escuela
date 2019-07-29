@@ -10,7 +10,8 @@
 {% include "amenus.html" %}
 
 {% endblock %}
-{% block content %} {% csrf-field %}
+{% block content %}
+{% csrf-field %}
 <table id="dg"
        title="{{ title }}"
        class="easyui-datagrid datagrid-searchable"
@@ -46,10 +47,6 @@
      class="easyui-linkbutton"
      data-options="iconCls: 'icon-edit',plain: true"
      onclick="defaultGridEditItem({})">Editar</a>
-  <a href="javascript:void(0)"
-     class="easyui-linkbutton"
-     data-options="iconCls: 'icon-remove',plain: true"
-     onclick="defaultGridDeleteItem()">Remover</a>
   <div style="float: right">
     <input class="easyui-textbox" id="datagrid-searchbox" data-options="prompt: 'Busqueda'" title="Buscar">
   </div>
@@ -123,7 +120,6 @@
 </div>
 {% endblock %}
 
-<script type="text/javascript"></script>
 {% block scripts %}
 {% script "/easyui/jquery.easyui.min.js" %}
 {% script "/easyui/datagrid-detailview.js" %}

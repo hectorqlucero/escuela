@@ -112,3 +112,45 @@
       (generate-string {:success "Record processado correctamente!"})
       (generate-string {:error "Error, no se pudo processar el record!"}))))
 ;; End Save form
+
+;; Start activar eventos
+(def activar-eventos-sql
+  "SELECT
+   id,
+   titulo,
+   descripcion,
+   lugar,
+   DATE_FORMAT(fecha_inicio,'%d/%m/%Y') as fecha_inicio,
+   TIME_FORMAT(hora_inicio,'%H:%i %p') as hora_inicio,
+   DATE_FORMAT(fecha_terminacion,'%d/%m/%Y') as fecha_terminacion,
+   TIME_FORMAT(hora_terminacion,'%H:%i %p') as hora_terminacion
+   FROM eventos
+   ORDER BY fecha_inicio, hora_inicio")
+
+(defn activar-eventos [_]
+  (render-file "admin/aeventos.html" {:title "Activar Eventos"
+                                      :rows (Query db activar-eventos-sql)
+                                      :path (str (:path config) "eventos/")
+                                      :epath "/eventos/"
+                                      :ok (get-session-id)}))
+;; End activar eventos
+
+;; Start registrados eventos
+(def registrados-sql
+  "SELECT
+   alumnos.nombre,
+   alumnos.apell_paterno,
+   alumnos.apell_materno,
+   eventos.titulo,
+   DATE_FORMAT(registro_evento.fecha, '%d/%m/%Y') as fecha,
+   TIME_FORMAT(registro_evento.hora_entrada,'%H:%i %p') as hora_entrada,
+   TIME_FORMAT(registro_evento.hora_salida,'%H:%i %p') as hora_salida
+   FROM registro_evento
+   JOIN alumnos on alumnos.matricula = registro_evento.matricula_id
+   JOIN eventos on eventos.id = registro_evento.eventos_id
+   WHERE
+   registro_evento.eventos_id = ?")
+(defn registrados-eventos [eventos_id]
+  (render-file "admin/reventos.html" {:title "Registrados"
+                                      :rows (Query db [registrados-sql eventos_id])}))
+;; End registrados eventos
