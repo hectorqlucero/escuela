@@ -161,7 +161,8 @@
       (render-file "routes/reset_password.html" {:title "Resetear Contraseña"
                                                  :row   (generate-string {:matricula matricula})})
       (render-file "404.html" {:title "Resetear Contraseña"
-                                      :error "Su token es incorrecto o ya expiro!"}))))
+                               :return-url "/"
+                               :error "Su token es incorrecto o ya expiro!"}))))
 
 (defn reset-jwt! [{params :params}]
   (let [matricula (or (:matricula params) "0")

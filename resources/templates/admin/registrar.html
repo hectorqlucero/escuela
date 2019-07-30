@@ -43,6 +43,7 @@
   </form>
 </div>
 {% endblock %}
+
 {% block scripts %}
 {% script "/easyui/jquery.easyui.min.js" %}
 {% script "/easyui/datagrid-detailview.js" %}
@@ -60,7 +61,13 @@
           try {
             var dta = JSON.parse(data);
             if(dta.hasOwnProperty('url')) {
-              window.location.href = dta.url;
+              $.messager.alert({
+                title: 'Processado!',
+                msg: 'Usuario registrado correctamente!',
+                fn: function() {
+                  window.location.href = dta.url
+                }
+              })
             } else if(dta.hasOwnProperty('error')) {
               $.messager.alert('Error', dta.error, 'error');
             }

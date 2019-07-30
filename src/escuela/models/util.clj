@@ -60,6 +60,9 @@
 (defn get-reset-url [request token]
   (str (get-base-url request) "/reset_password/" token))
 
+(defn get-reset-url-admin [request token]
+  (str (get-base-url request) "/admin/reset_password/" token))
+
 ;; Start jwt token
 (defn create-token [k]
   "Creates jwt token with 10 minutes expiration time"
