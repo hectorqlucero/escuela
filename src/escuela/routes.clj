@@ -23,7 +23,6 @@
   (GET "/reset_password/:token" [token] (registro/reset-jwt! token))
   (POST "/reset_password" request [] (registro/reset-jwt! request))
   (GET "/r_alumnos" request [] (registro/r-alumnos request))
-  (GET "/eventos/:eventos_id" [eventos_id] (eventos/eventos eventos_id))
   (GET "/eventos/processar/:matricula_id/:eventos_id" [matricula_id eventos_id] (eventos/processar matricula_id eventos_id))
   (GET "/admin/registrar" request [] (ahome/registrar request))
   (POST "/admin/registrar" request [] (ahome/registrar! request))

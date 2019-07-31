@@ -74,7 +74,17 @@
     :titulo "Nuevas tecnologias para la odontologia"
     :fecha_terminacion "2019-07-25"
     :hora_terminacion "12:00"
-    }])
+    }
+   {:id "2"
+    :categorias_id "3"
+    :descripcion "Conferencia Odontologia por el expositor Margarito Lopez, en el cual se hablara de los nuevos tratamientos odontologicos y las nuevas tecnologias que se aplicaran en estas modalidades."
+    :fecha_inicio "2019-07-25"
+    :hora_inicio "08:00"
+    :imagen "1.jpg"
+    :lugar "Edificio de Vi-serectoria aula magna # 1"
+    :titulo "Nuevas tecnologias para la odontologia"
+    :fecha_terminacion "2019-07-25"
+    :hora_terminacion "12:00" }])
 
 (def users-sql
   "CREATE TABLE users (
@@ -177,4 +187,4 @@
   (Query! db "DROP table IF EXISTS registro_evento")
   (Query! db registro_evento-sql))
 
-(migrate)
+;;(migrate)
