@@ -5,8 +5,8 @@
             [selmer.parser :refer [render-file]]
             [escuela.models.crud :refer [db Query Save Update config]]
             [escuela.models.util :refer [get-matricula-id
-                                    current_time_internal
-                                    today-internal]]))
+                                         current_time_internal
+                                         today-internal]]))
 
 ;; Start eventos
 (def eventos-sql
