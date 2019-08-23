@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% style "/easyui/themes/default/easyui.css" %}
+{% style "/easyui/themes/icon.css" %}
+{% style "/easyui/themes/color.css" %}
+<style>
+body, html {
+  height: 100%;
+}
+.bg {
+  color:black;
+  font-weight:bold;
+  background-image: url("/images/background.jpeg");
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
+{% endblock %}
+
+{% block body-start %}
+<body class="bg">
+{% endblock %}
+
+{% block menu %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col- col-sm-10 col-md-10 col-lg-10 col-xl-10 text-center"><h4>{{ row.titulo }}</h4></div>
+    <div class="col- col-sm-2 col-md-2 col-lg-2 col-xl-2 text-center">Hora Actual:</div>
+  </div>
+
+  <div class="row">
+    <div class="co- col-sm-10 col-md-10 col-lg-10 col-xl-10 clock text-center">{{ row.descripcion }}</div>
+    <div id="clock" class="col- col-sm-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+  </div>
+
+  <div class="row">
+    <div class="col- col-sm-10 col-md-10 col-lg-10 col-xl-10 text-center"><b><h2>Registro del evento</h2></b></div>
+    <div class="col- col-sm-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+  </div>
+
+  <div class="row">
+    <div class="col- col-sm-10 col-md-10 col-lg-10 col-xl-10 text-center">
+      <b>Matricula:</b>
+      <input name="matricula" class="form-control" id="matricula" width="100%">
+    </div>
+    <div class="col- col-sm-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+  </div>
+
+  <div class="row" style="margin-top:10px;">
+    <div class="co- col-sm-10 col-md-10 col-lg-10 col-xl-10 clock text-center"><img src="{{ path }}{{ row.imagen}}" class="img-fluid"></img></div>
+    <div class="col- col-sm-2 col-md-2 col-lg-2 col-xl-2 text-center"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% script "/easyui/jquery.easyui.min.js" %}
+{% script "/easyui/datagrid-detailview.js" %}
+{% script "/easyui/plugins/jquery.datagrid.js" %}
+{% script "/js/jquery.maskedinput.min.js" %}
+{% script "/easyui/locale/easyui-lang-es.js" %}
+<script>
+  function updateClock() {
+    $.get("/table_ref/clock",function(data) {
+      $("#clock").html(data);
+    });
+  }
+function validate(matricula) {
+  var url = "/eventos/processar/" + matricula + "/{{ row.id }}";
+  $.get(url,function(data) {
+    var dta = JSON.parse(data);
+    if(dta.hasOwnProperty('success')) {
+      $.messager.show({
+        title:'Informacion!',
+        msg: dta.success,
+        timeout:2000,
+        showType:'slide'
+      });
+    } else {
+      $.messager.show({
+        title:'Error!',
+        msg: dta.error,
+        timeout:2000,
+        showType:'slide'
+      });
+    }
+    $("#matricula").val('');
+  });
+}
+$(document).ready(function() {
+  setInterval('updateClock()', 100);
+  $("#matricula").on("keydown", function (e) {
+    var matricula = $("#matricula").val();
+    if(e.keyCode == 13) {
+      validate(matricula);
+    }
+  });
+});
+</script>
+{% endblock %}

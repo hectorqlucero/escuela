@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% style "/easyui/themes/default/easyui.css" %}
+{% style "/easyui/themes/icon.css" %}
+{% style "/easyui/themes/color.css" %}
+{% endblock %}
+
+{% block menu %}
+{% include "sk/routes/maestros/menus.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive">
+  <table class="table table-striped w-auto">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">TITULO</th>
+        <th scope="col">DESCRIPCION</th>
+        <th scope="col">LUGAR</th>
+        <th scope="col">INICIA</th>
+        <th scope="col">HORA</th>
+        <th scope="col">TERMINA</th>
+        <th scope="col">HORA</th>
+        <th scope="col">REGISTRADOS</th>
+        <th scope="col">ACTIVAR</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+        <td>{{ row.titulo }}</td>
+        <td>{{ row.descripcion }}</td>
+        <td>{{ row.lugar }}</td>
+        <td>{{ row.fecha_inicio }}</td>
+        <td>{{ row.hora_inicio }}</td>
+        <td>{{ row.fecha_terminacion }}</td>
+        <td>{{ row.hora_terminacion }}</td>
+        <td><a id="registrados" href="/maestros/reventos/{{ row.id }}" class="easyui-linkbutton" target="popup" onclick="window.open('/maestros/reventos/{{ row.id }}','popup','width=800,height=600,scrollbars=no,resizable=no'); return false;">Registrados</a>
+        <td><a id="activar" href="/eventos/{{ row.id }}" class="easyui-linkbutton">Activar</a>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% script "/easyui/jquery.easyui.min.js" %}
+{% script "/easyui/datagrid-detailview.js" %}
+{% script "/easyui/plugins/jquery.datagrid.js" %}
+{% script "/js/jquery.maskedinput.min.js" %}
+{% script "/easyui/locale/easyui-lang-es.js" %}
+{% endblock %}
