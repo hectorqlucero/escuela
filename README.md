@@ -9,13 +9,13 @@ A Clojure library designed to create a skeleton web application
 3. mySQL or MariaDB
 
 ## Usage
-1. Create a database "sk" in mySQL or MariaDB
+1. Create a database "escuela" in mySQL or MariaDB
 2. Clone the repository
 3. Create a config file in: resources/private/config.clj
   Example of resources/private/config.clj
   ```
   {:db-protocol    "mysql"
-  :db-name        "//localhost:3306/sk?characterEncoding=UTF-8"
+  :db-name        "//localhost:3306/escuela?characterEncoding=UTF-8"
   :db-user        "root"
   :db-pwd         "xxxxxxxx"
   :db-class       "com.mysql.cj.jdbc.Driver"
