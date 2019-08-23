@@ -18,7 +18,7 @@
   (GET "/table_ref/get_imagen/:id" [id] (table_ref/imagen "eventos" "imagen" "id" id))
   (GET "/table_ref/clock" [] (table_ref/clock))
   ;; End table_ref
-  ;; Start alumnos-registro
+  ;; Start alumnos-registrar
   (GET "/" request [] (alumnos-home/page-error request))
   (GET "/alumnos" request [] (alumnos-home/main request))
   (GET "/alumnos/login" request [] (alumnos-registrar/buscar request))
@@ -30,7 +30,7 @@
   (GET "/alumnos/reset_password/:token" [token] (alumnos-registrar/reset-jwt token))
   (POST "/alumnos/reset_password" request [] (alumnos-registrar/reset-jwt! request))
   (GET "/alumnos/logoff" request [] (alumnos-registrar/logoff request))
-  ;; End alumnos-registro
+  ;; End alumnos-registrar
   ;; Start maestros-home
   (GET "/maestros" request [] (maestros-home/main request))
   (GET "/maestros/login" request [] (maestros-home/login request))
