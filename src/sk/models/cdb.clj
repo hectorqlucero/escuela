@@ -112,7 +112,7 @@
 ;; End registro_evento table
 
 (defn create-database []
-  "Creates database tables and a default admin users
+  "Creates database tables and default admin users
    Note: First create the database on MySQL with any client"
   (Query! db users-sql)
   (Insert-multi db :users user-rows)
