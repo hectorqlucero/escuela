@@ -12,4 +12,4 @@
                                   :matricula (get-matricula-id)}))
 
 (defn page-error [request]
-  (render-file "error.html" {:error "Intento acceder a una pagina protegida!"}))
+  (render-file "escuela.html" {:error "Bienvenido!"}))
