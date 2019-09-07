@@ -29,7 +29,7 @@
   :aot [sk.core]
   :plugins [[lein-ancient "0.6.10"]
             [lein-pprint "1.1.2"]]
-  :uberjar-name "sk.jar"
+  :uberjar-name "escuela.jar"
   :target-path "target/%s"
   :ring {:handler sk.core/app
          :auto-reload? true
