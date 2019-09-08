@@ -58,7 +58,7 @@
                           "Para resetear tu contraseña <strong>" "<a href='" url "'>Clic Aqui</a>" "</strong>.</br></br>"
                           "Alternativamente, puedes copiar y pegar el siguiente link en la barra de tu browser:</br></br>"
                           url "</br></br>"
-                          "Este link solo sera bueno por 10 minutos.</br></br>"
+                          "Este link solo sera bueno por 50 minutos.</br></br>"
                           "Si no solicito resetear su contraseña simplemente ignore este mensage.</br></br></br>"
                           "Sinceramente,</br></br>"
                           "La administracion")

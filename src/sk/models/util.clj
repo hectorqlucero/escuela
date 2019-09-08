@@ -62,9 +62,9 @@
 
 ;; Start jwt token
 (defn create-token [k]
-  "Creates jwt token with 10 minutes expiration time"
+  "Creates jwt token with 50 minutes expiration time"
   (let [data {:iss k
-              :exp (t/plus (t/now) (t/minutes 10))
+              :exp (t/plus (t/now) (t/minutes 50))
               :iat (t/now)}]
     (-> data jwt to-str)))
 
