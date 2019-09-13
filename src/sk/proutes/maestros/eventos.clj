@@ -82,6 +82,10 @@
   "Revisar si ya hay un dato de hora_entrada en la tabla registro_evento"
   (if-not (nil? (:hora_entrada row)) 1 nil))
 
+(defn evento-end-check [row]
+  "Revisar si ya hay un dato de hora_salida en la tabla registro_evento"
+  (if-not (nil? (:hora_salida row)) 1 nil))
+
 (defn crear [matricula_id eventos_id]
   "Crear un record en la tabla registro_evento"
   (let [postvars {:matricula_id (str matricula_id)
@@ -106,6 +110,7 @@
       (let [row (first (Query db [matricula-sql eventos_id matricula_id]))
             data-exists (matricula-exists matricula_id eventos_id)
             start-exists (evento-start-check row)
+            end-exists (evento-end-check row)
             valid-alumno (valid-matricula matricula_id)
             error (if (nil? valid-alumno)
                     "Matricula no existe!"
@@ -139,7 +144,9 @@
    "DATE_FORMAT(fecha_inicio,'%d/%m/%Y')"
    "TIME_FORMAT(hora_inicio,'%h:%i %p')"
    "DATE_FORMAT(fecha_terminacion,'%d/%m/%Y')"
-   "TIME_FORMAT(hora_terminacion,'%h:%i %p')"])
+   "TIME_FORMAT(hora_terminacion,'%h:%i %p')"
+   "total_horas"
+   "total_porciento"])
 
 (def aliases-columns
   ["id"
@@ -149,7 +156,9 @@
    "DATE_FORMAT(fecha_inicio,'%d/%m/%Y') as fecha_inicio"
    "TIME_FORMAT(hora_inicio,'%h:%i %p') as hora_inicio"
    "DATE_FORMAT(fecha_terminacion,'%d/%m/%Y') as fecha_terminacion"
-   "TIME_FORMAT(hora_terminacion,'%h:%i %p') as hora_terminacion"])
+   "TIME_FORMAT(hora_terminacion,'%h:%i %p') as hora_terminacion"
+   "total_horas"
+   "total_porciento"])
 
 (defn grid-eventos [{params :params}]
   (if-not (nil? (get-session-id))
@@ -180,7 +189,9 @@
    lugar,
    DATE_FORMAT(fecha_terminacion,'%m/%d/%Y') as fecha_terminacion,
    TIME_FORMAT(hora_terminacion,'%H:%i') as hora_terminacion,
-   titulo
+   titulo,
+   total_horas,
+   total_porciento
    FROM eventos
    WHERE id = ?")
 
@@ -212,11 +223,13 @@
   {:categorias_id (:categorias_id params)
    :descripcion (:descripcion params)
    :fecha_inicio (format-date-internal (:fecha_inicio params))
+   :fecha_terminacion (format-date-internal (:fecha_terminacion params))
    :hora_inicio (:hora_inicio params)
+   :hora_terminacion (:hora_terminacion params)
    :lugar (:lugar params)
    :titulo (:titulo params)
-   :fecha_terminacion (format-date-internal (:fecha_terminacion params))
-   :hora_terminacion (:hora_terminacion params)})
+   :total_horas (:total_horas params)
+   :total_porciento (:total_porciento params)})
 
 (defn form-eventos! [{params :params}]
   (if-not (nil? (get-session-id))
@@ -273,7 +286,13 @@
    JOIN alumnos on alumnos.matricula = registro_evento.matricula_id
    JOIN eventos on eventos.id = registro_evento.eventos_id
    WHERE
-   registro_evento.eventos_id = ?")
+   registro_evento.eventos_id = ?
+   ORDER BY 
+   alumnos.apell_paterno,
+   alumnos.apell_materno,
+   alumnos.nombre,
+   registro_evento.fecha,
+   registro_evento.hora_entrada")
 
 (defn registrados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
@@ -282,3 +301,34 @@
                                                         :rows (Query db [registrados-sql eventos_id])}))
     (redirect "/")))
 ;; End registrados eventos
+
+;; Start resultados
+(def resultados_evento-sql
+  "SELECT
+   alumnos.nombre,
+   alumnos.apell_paterno,
+   alumnos.apell_materno,
+   eventos.titulo,
+   DATE_FORMAT(registro_evento.fecha,'%d/%m/%Y') AS fecha,
+   eventos.total_horas as horas,
+   TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))),'%H:%i:%s') as asistencia,
+   CONCAT(ROUND(((SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))) * 100) / (total_horas * 60 * 60),0),' %') as porcentage,
+  IF(ROUND(((SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))) * 100) / (eventos.total_horas * 60 * 60),0) >= eventos.total_porciento,1,0) AS ok
+   FROM registro_evento
+   JOIN eventos on eventos.id = registro_evento.eventos_id
+   JOIN alumnos on alumnos.matricula = registro_evento.matricula_id
+   WHERE registro_evento.eventos_id = ?
+   GROUP BY registro_evento.matricula_id
+   ORDER BY 
+   alumnos.apell_paterno,
+   alumnos.apell_materno,
+   alumnos.nombre")
+
+(defn resultados-eventos [eventos_id]
+  (if-not (nil? (get-session-id))
+    (do
+      (render-file "sk/proutes/maestros/resultados.html" {:title "Resultados"
+                                                        :rows (Query db [resultados_evento-sql eventos_id])}))
+    (redirect "/")))
+;; End resultados
+

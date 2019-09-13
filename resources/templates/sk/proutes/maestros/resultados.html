@@ -4,9 +4,25 @@
 {% style "/easyui/themes/default/easyui.css" %}
 {% style "/easyui/themes/icon.css" %}
 {% style "/easyui/themes/color.css" %}
+<style>
+body, html {
+  height: 100%;
+}
+.bg {
+  color:black;
+  font-weight:bold;
+  background-image: url("/images/resultados.png");
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
 {% endblock %}
 
-{% block menu %}{% endblock %}
+{% block body-start %}
+<body class="bg">
+{% endblock %}
 
 {% block content %}
 <div class="table-responsive">
@@ -18,8 +34,9 @@
         <th scope="col">NOMBRE</th>
         <th scope="col">TITULO</th>
         <th scope="col">FECHA</th>
-        <th scope="col">HORA ENTRADA</th>
-        <th scope="col">HORA SALIDA</th>
+        <th scope="col">HORAS</th>
+        <th scope="col">ASISTENCIA</th>
+        <th scope="col">PORCENTAGE</th>
       </tr>
     </thead>
     <tbody>
@@ -30,8 +47,13 @@
         <td>{{ row.nombre }}</td>
         <td>{{ row.titulo }}</td>
         <td>{{ row.fecha }}</td>
-        <td>{{ row.hora_entrada }}</td>
-        <td>{{ row.hora_salida }}</td>
+        <td>{{ row.horas }}</td>
+        <td>{{ row.asistencia }}</td>
+        {% if row.ok = 1 %}
+        <td class="table-success">{{ row.porcentage }}</td>
+        {% else %}
+        <td class="table-danger">{{ row.porcentage }}</td>
+        {% endif %}
         </tr>
         {% endfor %}
     </tbody>

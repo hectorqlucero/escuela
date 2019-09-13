@@ -91,6 +91,8 @@
    titulo varchar(250) DEFAULT NULL,
    fecha_terminacion date DEFAULT NULL,
    hora_terminacion time DEFAULT NULL,
+   total_horas int(11) DEFAULT NULL,
+   total_porciento int(11) DEFAULT NULL,
    CONSTRAINT `fk_eventos_categorias`
    FOREIGN KEY (categorias_id) REFERENCES categorias (id)
    ON DELETE CASCADE
@@ -146,8 +148,175 @@
 
 (defn migrate []
   "Migrate by the seat of my pants"
-  (Query! db "DROP table IF EXISTS users")
-  (Query! db users-sql)
-  (Insert-multi db :users user-rows))
+  (Query! db "DROP table IF EXISTS registro_evento")
+  (Query! db "DROP table IF EXISTS eventos")
+  (Query! db "DROP table IF EXISTS alumnos")
+  (Query! db alumnos-sql)
+  (Query! db eventos-sql)
+  (Query! db registro_evento-sql)
+  (Insert db "alumnos" {:matricula "28787"
+                        :password "elmo1200"
+                        :apell_paterno "Pacas"
+                        :apell_materno "Verdes"
+                        :nombre "Pedro"
+                        :escuela "CSULB"
+                        :carrera "Programacion"
+                        :semestre "8"
+                        :status "A"
+                        :email "pedropacas@servidor.com"})
+  (Insert db "alumnos" {:matricula "28788"
+                        :password "101117"
+                        :apell_paterno "Pacas"
+                        :apell_materno "Azules"
+                        :nombre "Maria"
+                        :escuela "UABC"
+                        :carrera "Programacion"
+                        :semestre "8"
+                        :status "A"
+                        :email "mariapacas@servidor.com"})
+  (Insert db "alumnos" {:matricula "28789"
+                        :password "101117"
+                        :apell_paterno "Paredes"
+                        :apell_materno "Robles"
+                        :nombre "Adrian"
+                        :escuela "UABC"
+                        :carrera "Programacion"
+                        :semestre "8"
+                        :status "A"
+                        :email "adrianpardes@servidor.com"})
+  (Insert db "alumnos" {:matricula "28790"
+                        :password "101117"
+                        :apell_paterno "Pacas"
+                        :apell_materno "Azules"
+                        :nombre "Maribel"
+                        :escuela "UABC"
+                        :carrera "Programacion"
+                        :semestre "8"
+                        :status "A"
+                        :email "maribelpacas@servidor.com"})
+  (Insert db "alumnos" {:matricula "28791"
+                        :password "101117"
+                        :apell_paterno "Paredes"
+                        :apell_materno "Robles"
+                        :nombre "Mario"
+                        :escuela "UABC"
+                        :carrera "Programacion"
+                        :semestre "8"
+                        :status "A"
+                        :email "mariopardes@servidor.com"})
+  (Insert db "eventos" {:categorias_id "6"
+                        :descripcion "Tutorias de Odontologia, para el desarollo del alumno"
+                        :lugar "Vicerectoria Aula #1"
+                        :titulo "Tutorias de Odontologia"
+                        :fecha_inicio "2019-09-13"
+                        :fecha_terminacion "2019-09-16"
+                        :hora_inicio "08:00:00"
+                        :hora_terminacion "18:00:00"
+                        :total_horas "10"
+                        :total_porciento "80"})
+  (Insert db "registro_evento" {:matricula_id "28787"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "07:45:00"
+                                :hora_salida "09:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28787"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "10:10:00"
+                                :hora_salida "12:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28787"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "13:00:00"
+                                :hora_salida "14:00:00"})
+  (Insert db "registro_evento" {:matricula_id "28787"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "14:20:00"
+                                :hora_salida "18:06:00"})
 
+  (Insert db "registro_evento" {:matricula_id "28788"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "08:45:00"
+                                :hora_salida "09:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28788"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "10:30:00"
+                                :hora_salida "12:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28788"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "13:20:00"
+                                :hora_salida "14:00:00"})
+  (Insert db "registro_evento" {:matricula_id "28788"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "15:20:00"
+                                :hora_salida "18:06:00"})
+
+  (Insert db "registro_evento" {:matricula_id "28789"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "08:40:00"
+                                :hora_salida "09:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28789"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "10:30:00"
+                                :hora_salida "12:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28789"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "13:30:00"
+                                :hora_salida "14:00:00"})
+  (Insert db "registro_evento" {:matricula_id "28789"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "15:30:00"
+                                :hora_salida "18:06:00"})
+
+  (Insert db "registro_evento" {:matricula_id "28790"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "07:45:00"
+                                :hora_salida "09:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28790"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "10:10:00"
+                                :hora_salida "12:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28790"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "13:00:00"
+                                :hora_salida "14:00:00"})
+  (Insert db "registro_evento" {:matricula_id "28790"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "14:20:00"
+                                :hora_salida "18:06:00"})
+
+  (Insert db "registro_evento" {:matricula_id "28791"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "08:45:00"
+                                :hora_salida "09:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28791"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "10:30:00"
+                                :hora_salida "12:50:00"})
+  (Insert db "registro_evento" {:matricula_id "28791"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "13:20:00"
+                                :hora_salida "14:00:00"})
+  (Insert db "registro_evento" {:matricula_id "28791"
+                                :eventos_id "1"
+                                :fecha "2019-09-13"
+                                :hora_entrada "15:20:00"
+                                :hora_salida "18:06:00"})
+  )
 ;;(create-database)

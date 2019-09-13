@@ -23,6 +23,7 @@
         <th scope="col">TERMINA</th>
         <th scope="col">HORA</th>
         <th scope="col">REGISTRADOS</th>
+        <th scope="col">APROVADOS</th>
         <th scope="col">ACTIVAR</th>
       </tr>
     </thead>
@@ -36,8 +37,13 @@
         <td>{{ row.hora_inicio }}</td>
         <td>{{ row.fecha_terminacion }}</td>
         <td>{{ row.hora_terminacion }}</td>
-        <td><a id="registrados" href="/maestros/reventos/{{ row.id }}" class="easyui-linkbutton" target="popup" onclick="window.open('/maestros/reventos/{{ row.id }}','popup','width=800,height=600,scrollbars=no,resizable=no'); return false;">Registrados</a>
-        <td><a id="activar" href="/eventos/{{ row.id }}" class="easyui-linkbutton">Activar</a>
+        <td>
+          <a id="registrados" href="/maestros/reventos/{{ row.id }}" class="easyui-linkbutton" target="popup" onclick="window.open('/maestros/reventos/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Registrados</a>
+        </td>
+        <td>
+          <a id="registrados" href="/maestros/resultados/{{ row.id }}" class="easyui-linkbutton" target="popup" onclick="window.open('/maestros/resultados/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Resultados</a>
+        </td>
+        <td><a id="activar" href="/eventos/{{ row.id }}" class="easyui-linkbutton">Activar</a></td>
         </tr>
         {% endfor %}
     </tbody>

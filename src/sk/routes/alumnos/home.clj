@@ -12,4 +12,4 @@
                                   :matricula (get-matricula-id)}))
 
 (defn page-error [request]
-  (render-file "escuela.html" {:error "Bienvenido!"}))
+  (render-file "escuela.html" {:error "No se encuentra la pagina que buscas!"}))

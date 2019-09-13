@@ -34,6 +34,8 @@
       <th data-options="field: 'hora_inicio', sortable: true">HORA</th>
       <th data-options="field: 'fecha_terminacion', sortable: true">TERMINA</th>
       <th data-options="field: 'hora_terminacion', sortable: true">HORA</th>
+      <th data-options="field: 'total_horas', sortable: true">TOTAL HORAS</th>
+      <th data-options="field: 'total_porciento', sortable: true">% APROBACIÓN</th>
     </tr>
   </thead>
 </table>
@@ -95,16 +97,24 @@
       <input id="fecha_inicio" name="fecha_inicio" class="form-control easyui-datebox" data-options="required:true">
     </div>
     <div class="form-group col-11">
-      <label for="hora_inicio">Hora/Inicio:</label>
-      <input id="hora_inicio" name="hora_inicio" type="time" class="form-control easyui-textbox" data-options="required:true">
-    </div>
-    <div class="form-group col-11">
       <label for="fecha_terminacion">Fecha/Terminación:</label>
       <input id="fecha_terminacion" name="fecha_terminacion" class="form-control easyui-datebox" data-options="required:true">
     </div>
     <div class="form-group col-11">
+      <label for="hora_inicio">Hora/Inicio:</label>
+      <input id="hora_inicio" name="hora_inicio" type="time" class="form-control easyui-textbox" data-options="required:true">
+    </div>
+    <div class="form-group col-11">
       <label for="hora_terminacion">Hora/Terminación:</label>
       <input id="hora_terminacion" name="hora_terminacion" type="time" class="form-control easyui-textbox" data-options="required:true">
+    </div>
+    <div class="form-group col-11">
+      <label for="total_horas">Total/Horas:</label>
+      <input id="total_horas" name="total_horas" class="form-control easyui-numberbox" data-options="required:true,min:1,max:500">
+    </div>
+    <div class="form-group col-11">
+      <label for="total_porciento">Aprovación/Porcentage:<small>ex: 80</small></label>
+      <input id="total_porciento" name="total_porciento" class="form-control easyui-numberbox" data-options="required:true,min:1,max:100">
     </div>
   </form>
 </div>
