@@ -1,6 +1,6 @@
 (ns sk.proutes.maestros.eventos
   (:require [cheshire.core :refer [generate-string]]
-            [sk.models.crud :refer [db Query Save Update config]]
+            [sk.models.crud :refer [db Query Save Insert Update config]]
             [sk.models.grid :refer :all]
             [sk.models.util :refer [get-session-id
                                     get-matricula-id
@@ -66,7 +66,9 @@
    WHERE
    eventos_id = ?
    AND
-   matricula_id = ?")
+   matricula_id = ?
+   ORDER BY id DESC
+   LIMIT 1")
 
 (defn valid-matricula [matricula_id]
   "Revisar si existe un alumno con la matricula especificiada"
@@ -92,15 +94,17 @@
                   :eventos_id (str eventos_id)
                   :hora_entrada (current_time_internal)
                   :fecha (today-internal)}
-        result (Save db :registro_evento postvars ["matricula_id = ? AND eventos_id = ?" (str matricula_id) (str eventos_id)])]
+        result (Insert db :registro_evento postvars)]
     result))
 
-(defn actualizar [matricula_id eventos_id start-exists]
-  "Actualizar un record en la tabla registro_evento cuando existen datos"
+(defn actualizar [matricula_id registro_evento_id eventos_id start-exists end-exists]
+  "Actualizar un record en la tabla registro_evento cuando existen datos o crear un nuevo record"
   (let [postvars (if (nil? start-exists)
                    {:hora_entrada (current_time_internal)}
                    {:hora_salida (current_time_internal)})
-        result (Update db :registro_evento postvars ["matricula_id = ? AND eventos_id = ?" (str matricula_id) (str eventos_id)])]
+        result (if (nil? end-exists)
+                 (Update db :registro_evento postvars ["id = ?" (str registro_evento_id)])
+                 (crear matricula_id eventos_id))]
     result))
 
 (defn processar [matricula_id eventos_id]
@@ -108,6 +112,7 @@
   (if-not (nil? (get-session-id))
     (do
       (let [row (first (Query db [matricula-sql eventos_id matricula_id]))
+            registro_evento_id (:id row)
             data-exists (matricula-exists matricula_id eventos_id)
             start-exists (evento-start-check row)
             end-exists (evento-end-check row)
@@ -119,7 +124,7 @@
                      (do
                        (if (nil? data-exists)
                          (crear matricula_id eventos_id)
-                         (actualizar matricula_id eventos_id start-exists)))
+                         (actualizar matricula_id registro_evento_id eventos_id start-exists end-exists)))
                      nil)]
         (if (seq result)
           (generate-string {:success "Registro processado!"})
