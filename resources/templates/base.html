@@ -19,10 +19,24 @@
 
     <!-- Block loader -->
     {% block loader_head %} {% style "/css/loader.css" %} {% endblock %}
+    <style>
+    body, html {
+      height: 100%;
+    }
+    .bg {
+      color:black;
+      font-weight:bold;
+      background-image: url("/images/resultados.png");
+      height: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    </style>
 </head>
 
 {% block body-start %}
-<body>
+<body class="bg">
 {% endblock %}
     <!-- Lodader container -->
     {% block loader_container %}
