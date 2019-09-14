@@ -11,6 +11,7 @@
   ;; Start maestros-eventons
   (GET "/eventos/:eventos_id" [eventos_id] (maestros-eventos/eventos eventos_id))
   (GET "/eventos/processar/:matricula_id/:eventos_id" [matricula_id eventos_id] (maestros-eventos/processar matricula_id eventos_id))
+  (GET "/maestros/padron" request [] (maestros-eventos/padron request))
   (GET "/maestros/ceventos" request [] (maestros-eventos/crear-eventos request))
   (POST "/maestros/ceventos/json/grid" request [] (maestros-eventos/grid-eventos request))
   (GET "/maestros/ceventos/json/form/:id" [id] (maestros-eventos/form-eventos id))

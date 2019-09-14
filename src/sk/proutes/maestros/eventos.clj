@@ -15,6 +15,31 @@
             [noir.response :refer [redirect]]
             [selmer.parser :refer [render-file]]))
 
+;; Start padron
+(def padron-sql
+  "SELECT
+   matricula,
+   apell_paterno,
+   apell_materno,
+   nombre,
+   email
+   FROM alumnos
+   ORDER BY
+   apell_paterno,
+   apell_materno,
+   nombre")
+
+(defn padron [request]
+  (if-not (nil? (get-session-id))
+    (do
+      (let [title "Padron de Alumnos"
+            rows (Query db padron-sql)]
+        (render-file "sk/proutes/maestros/padron.html" {:title title
+                                                        :rows rows
+                                                        :ok (get-session-id)})))
+    (redirect "/")))
+;; End padron
+
 ;; Start eventos
 (def eventos-sql
   "SELECT
@@ -107,12 +132,18 @@
                  (crear matricula_id eventos_id))]
     result))
 
+(defn get-alumno-name [matricula_id]
+  (let [row (first (Query db ["SELECT CONCAT(nombre,' ',apell_paterno,' ',apell_materno) AS alumno_nombre FROM alumnos WHERE matricula = ?" matricula_id]))
+        alumno-nombre (:alumno_nombre row)]
+    alumno-nombre))
+
 (defn processar [matricula_id eventos_id]
   "Processar datos de los eventos y crear/modificar records o regresar un error"
   (if-not (nil? (get-session-id))
     (do
       (let [row (first (Query db [matricula-sql eventos_id matricula_id]))
             registro_evento_id (:id row)
+            alumno-nombre (get-alumno-name matricula_id)
             data-exists (matricula-exists matricula_id eventos_id)
             start-exists (evento-start-check row)
             end-exists (evento-end-check row)
@@ -127,7 +158,7 @@
                          (actualizar matricula_id registro_evento_id eventos_id start-exists end-exists)))
                      nil)]
         (if (seq result)
-          (generate-string {:success "Registro processado!"})
+          (generate-string {:success (str alumno-nombre " - Registro processado!")})
           (generate-string {:error error}))))
     (redirect "/")))
 ;; End processar

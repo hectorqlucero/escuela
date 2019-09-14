@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% style "/easyui/themes/default/easyui.css" %}
+{% style "/easyui/themes/icon.css" %}
+{% style "/easyui/themes/color.css" %}
+{% endblock %}
+
+{% block menu %}
+{% include "sk/routes/maestros/menus.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive">
+  <table class="table table-striped w-auto">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">MATRICULA</th>
+        <th scope="col">APELLIDO PATERNO</th>
+        <th scope="col">APELLIDO MATERNO</th>
+        <th scope="col">NOMBRE</th>
+        <th scope="col">EMAIL</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+        <td>{{ row.matricula }}</td>
+        <td>{{ row.apell_paterno }}</td>
+        <td>{{ row.apell_materno }}</td>
+        <td>{{ row.nombre }}</td>
+        <td>{{ row.email }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% script "/easyui/jquery.easyui.min.js" %}
+{% script "/easyui/datagrid-detailview.js" %}
+{% script "/easyui/plugins/jquery.datagrid.js" %}
+{% script "/js/jquery.maskedinput.min.js" %}
+{% script "/easyui/locale/easyui-lang-es.js" %}
+{% endblock %}
