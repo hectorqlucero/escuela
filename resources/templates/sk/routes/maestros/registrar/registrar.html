@@ -15,7 +15,7 @@
   <div class="card-header">
     <h4 class="mb-0"><span style="color:rgb(18,123,163);">{{ title }}</span></h4>
   </div>
-  <form class="fm" enctype="multipart/form-data" method="post" novalidate style="width:100%;background-color:#EFEFEF;">
+  <form class="fm" enctype="multipart/form-data" action="/maestros/registrar" method="post" novalidate style="width:100%;background-color:#EFEFEF;">
     {% csrf-field %}
     <div class="form-group col-10">
       <label for="email">Correo Electronico:</label>

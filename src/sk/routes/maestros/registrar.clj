@@ -13,13 +13,17 @@
                                     create-token]]))
 
 ;; Start registrar
-(defn registrar [request]
+(defn registrar [secret]
   "Registrar un nuevo usuario"
   (if (get-session-id)
     (render-file "404.html" {:error "Existe una session, no se puede crear un nuevo Usuario."
                              :return-url "/"})
-    (render-file "sk/routes/maestros/registrar/registrar.html" {:title "Registro De usuario"
-                                                       :ok (get-session-id)})))
+    (do
+      (if (= secret "elmo1200")
+        (render-file "sk/routes/maestros/registrar/registrar.html" {:title "Registro De usuario"
+                                                                    :ok (get-session-id)})
+        (render-file "404.html" {:error "No se pudo crear el usuario!"
+                                 :return-url "/"})))))
 
 (defn registrar! [{params :params}]
   "Postear los datos de registro de un nuevo cliente el la tabla usuarios"

@@ -17,6 +17,8 @@
   (POST "/maestros/ceventos/save" request [] (maestros-eventos/form-eventos! request))
   (GET "/maestros/aeventos" request [] (maestros-eventos/activar-eventos request))
   (GET "/maestros/reventos/:eventos_id" [eventos_id] (maestros-eventos/registrados-eventos eventos_id))
+  (GET "/maestros/aprovados/:eventos_id" [eventos_id] (maestros-eventos/aprovados-eventos eventos_id))
+  (GET "/maestros/reprovados/:eventos_id" [eventos_id] (maestros-eventos/reprovados-eventos eventos_id))
   (GET "/maestros/resultados/:eventos_id" [eventos_id] (maestros-eventos/resultados-eventos eventos_id))
   ;; End maestros-eventos
   )

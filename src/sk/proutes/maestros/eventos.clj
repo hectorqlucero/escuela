@@ -318,7 +318,7 @@
    eventos.total_horas as horas,
    TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))),'%H:%i:%s') as asistencia,
    CONCAT(ROUND(((SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))) * 100) / (total_horas * 60 * 60),0),' %') as porcentage,
-  IF(ROUND(((SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))) * 100) / (eventos.total_horas * 60 * 60),0) >= eventos.total_porciento,1,0) AS ok
+   IF(ROUND(((SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))) * 100) / (eventos.total_horas * 60 * 60),0) >= eventos.total_porciento,1,0) AS ok
    FROM registro_evento
    JOIN eventos on eventos.id = registro_evento.eventos_id
    JOIN alumnos on alumnos.matricula = registro_evento.matricula_id
@@ -333,7 +333,24 @@
   (if-not (nil? (get-session-id))
     (do
       (render-file "sk/proutes/maestros/resultados.html" {:title "Resultados"
-                                                        :rows (Query db [resultados_evento-sql eventos_id])}))
+                                                          :rows (Query db [resultados_evento-sql eventos_id])}))
     (redirect "/")))
 ;; End resultados
 
+(defn aprovados-eventos [eventos_id]
+  (if-not (nil? (get-session-id))
+    (do
+      (let [trows (Query db [resultados_evento-sql 1])
+            rows (map #(if (= (:ok %) 1) %) trows)]
+        (render-file "sk/proutes/maestros/resultados.html" {:title "Aprovados"
+                                                            :rows (remove nil? rows)})))
+    (redirect "/")))
+
+(defn reprovados-eventos [eventos_id]
+  (if-not (nil? (get-session-id))
+    (do
+      (let [trows (Query db [resultados_evento-sql 1])
+            rows (map #(if (= (:ok %) 0) %) trows)]
+        (render-file "sk/proutes/maestros/resultados.html" {:title "Reprovados"
+                                                            :rows (remove nil? rows)})))
+    (redirect "/")))

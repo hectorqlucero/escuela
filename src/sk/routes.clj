@@ -38,8 +38,8 @@
   (GET "/maestros/logoff" [] (maestros-home/logoff))
   ;; End maestros-home
   ;; Start maestros-registrar
-  ;;(GET "/maestros/registrar" request [] (maestros-registrar/registrar request))
-  ;;(POST "/maestros/registrar" request [] (maestros-registrar/registrar! request))
+  (GET "/maestros/registrar/:secret" [secret] (maestros-registrar/registrar secret))
+  (POST "/maestros/registrar" request [] (maestros-registrar/registrar! request))
   (GET "/maestros/rpaswd" request [] (maestros-registrar/reset-password request))
   (POST "/maestros/rpaswd" request [] (maestros-registrar/reset-password! request))
   (GET "/maestros/reset_password/:token" [token] (maestros-registrar/reset-jwt token))

@@ -22,8 +22,7 @@
         <th scope="col">HORA</th>
         <th scope="col">TERMINA</th>
         <th scope="col">HORA</th>
-        <th scope="col">REGISTRADOS</th>
-        <th scope="col">APROVADOS</th>
+        <th scope="col">RESULTADOS</th>
         <th scope="col">ACTIVAR</th>
       </tr>
     </thead>
@@ -37,13 +36,35 @@
         <td>{{ row.hora_inicio }}</td>
         <td>{{ row.fecha_terminacion }}</td>
         <td>{{ row.hora_terminacion }}</td>
+
         <td>
-          <a id="registrados" href="/maestros/reventos/{{ row.id }}" class="easyui-linkbutton" target="popup" onclick="window.open('/maestros/reventos/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Registrados</a>
+          <div class="dropdown">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+              Resultados
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" id="registrados"
+                href="/maestros/reventos/{{ row.id }}"
+                onclick="window.open('/maestros/reventos/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Registrados
+              </a>
+              <a class="dropdown-item" id="aprovados"
+                href="/maestros/aprovados/{{ row.id }}"
+                onclick="window.open('/maestros/aprovados/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Aprovados
+              </a>
+              <a class="dropdown-item" id="reprovados"
+                href="/maestros/reprovados/{{ row.id }}"
+                onclick="window.open('/maestros/reprovados/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Reprovados
+              </a>
+              <a class="dropdown-item" id="resultados"
+                href="/maestros/resultados/{{ row.id }}"
+                onclick="window.open('/maestros/resultados/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Resultados Todos
+              </a>
+            </div>
+          </div>
         </td>
         <td>
-          <a id="registrados" href="/maestros/resultados/{{ row.id }}" class="easyui-linkbutton" target="popup" onclick="window.open('/maestros/resultados/{{ row.id }}','popup','width=800,height=600,scrollbars=yes,resizable=yes'); return false;">Resultados</a>
+          <a id="activar" href="/eventos/{{ row.id }}" class="easyui-linkbutton">Activar</a>
         </td>
-        <td><a id="activar" href="/eventos/{{ row.id }}" class="easyui-linkbutton">Activar</a></td>
         </tr>
         {% endfor %}
     </tbody>
