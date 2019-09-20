@@ -11,11 +11,13 @@
   <table class="table table-striped w-auto">
     <thead class="thead-dark">
       <tr>
+        <th scope="col">MATRICULA</th>
         <th scope="col">APELLIDO PATERNO</th>
         <th scope="col">APELLIDO MATERNO</th>
         <th scope="col">NOMBRE</th>
         <th scope="col">TITULO</th>
-        <th scope="col">FECHA</th>
+        <th scope="col">INICIA</th>
+        <th scope="col">TERMINA</th>
         <th scope="col">HORAS</th>
         <th scope="col">ASISTENCIA</th>
         <th scope="col">PORCENTAGE</th>
@@ -24,11 +26,13 @@
     <tbody>
         {% for row in rows %}
         <tr>
+        <td>{{ row.matricula }}</td>
         <td>{{ row.apell_paterno }}</td>
         <td>{{ row.apell_materno }}</td>
         <td>{{ row.nombre }}</td>
         <td>{{ row.titulo }}</td>
-        <td>{{ row.fecha }}</td>
+        <td>{{ row.inicia }}</td>
+        <td>{{ row.termina }}</td>
         <td>{{ row.horas }}</td>
         <td>{{ row.asistencia }}</td>
         {% if row.ok = 1 %}

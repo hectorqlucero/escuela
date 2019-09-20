@@ -324,6 +324,7 @@
 ;; Start registrados eventos
 (def registrados-sql
   "SELECT
+   alumnos.matricula,
    alumnos.nombre,
    alumnos.apell_paterno,
    alumnos.apell_materno,
@@ -354,11 +355,14 @@
 ;; Start resultados
 (def resultados_evento-sql
   "SELECT
+   alumnos.matricula,
    alumnos.nombre,
    alumnos.apell_paterno,
    alumnos.apell_materno,
    eventos.titulo,
    DATE_FORMAT(registro_evento.fecha,'%d/%m/%Y') AS fecha,
+   DATE_FORMAT(eventos.fecha_inicio,'%d/%m/%Y') AS inicia,
+   DATE_FORMAT(eventos.fecha_terminacion,'%d/%m%Y') AS termina,
    eventos.total_horas as horas,
    TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))),'%H:%i:%s') as asistencia,
    CONCAT(ROUND(((SUM(TIME_TO_SEC(TIMEDIFF(registro_evento.hora_salida,registro_evento.hora_entrada)))) * 100) / (total_horas * 60 * 60),0),' %') as porcentage,
