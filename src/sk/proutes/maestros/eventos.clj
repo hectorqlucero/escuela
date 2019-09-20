@@ -137,6 +137,18 @@
         alumno-nombre (:alumno_nombre row)]
     alumno-nombre))
 
+(defn get-status [data-exists start-exists end-exists]
+  (let [status (cond
+                 (nil? data-exists) "Entrada"
+                 (and (nil? start-exists)
+                      (nil? end-exists)) "Entrada"
+                 (and (= start-exists 1)
+                      (nil? end-exists)) "Salida"
+                 (and (= data-exists 1)
+                      (= start-exists 1)
+                      (= end-exists 1)) "Entrada")]
+    status))
+
 (defn processar [matricula_id eventos_id]
   "Processar datos de los eventos y crear/modificar records o regresar un error"
   (if-not (nil? (get-session-id))
@@ -148,6 +160,7 @@
             start-exists (evento-start-check row)
             end-exists (evento-end-check row)
             valid-alumno (valid-matricula matricula_id)
+            status (get-status data-exists start-exists end-exists)
             error (if (nil? valid-alumno)
                     "Matricula no existe!"
                     "Fallo registro!")
@@ -158,7 +171,7 @@
                          (actualizar matricula_id registro_evento_id eventos_id start-exists end-exists)))
                      nil)]
         (if (seq result)
-          (generate-string {:success (str alumno-nombre " - Registro processado!")})
+          (generate-string {:success (str alumno-nombre " - Registro de " status " processado!")})
           (generate-string {:error error}))))
     (redirect "/")))
 ;; End processar
