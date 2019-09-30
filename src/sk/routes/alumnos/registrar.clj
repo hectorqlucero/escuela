@@ -53,16 +53,31 @@
    :fecha_egreso  (format-date-internal (:fecha-egreso params))
    :email         (clojure.string/lower-case (:email params))})
 
+(defn create-registrar-email [postvars]
+  (let [nombre (str (:nombre postvars) " " (:apell_paterno postvars) " " (:apell_materno postvars))
+        email (:email postvars)
+        subject "Tu matricula ha sido registrada correctamente"
+        content (str "<strong>Hola</strong> " nombre ",</br></br>"
+                     "Tu matricula # " (:matricula postvars) " se registro correctamente.  Haz click en salir despues de revisar que los datos sean correctos.</br></br>Sinceramente,</br>Administracion de la escuela de Odontologia")
+        body {:from "hectorqlucero@gmail.com"
+              :to email
+              :subject subject
+              :body [{:type "text/html;charset=utf-8"
+                      :content content}]}]
+    body))
+
 (defn registrar! [{params :params}]
   (let [matricula (or (:matricula params) "0")
         file      (:file params)
         foto      (upload-photo file matricula)
         postvars  (assoc (create-data params) :matricula matricula :foto foto)
+        email-body (create-registrar-email postvars)
         result    (Save db :alumnos postvars ["matricula = ?" matricula])]
     (if (seq result)
       (do
         (session/put! :matricula matricula)
         (session/put! :is_authenticated true)
+        (future (send-email host email-body))
         (generate-string {:url (str "/alumnos/matricula/" matricula)}))
       (generate-string {:error "No se pudo actualizar el Registro!"}))))
 

@@ -55,7 +55,8 @@
                  try {
                      var dta = JSON.parse(data);
                      if(dta.hasOwnProperty('url')) {
-                         window.location.href = dta.url;
+                       $.messager.alert('Informacion', 'Registro creado exitosamente, verificar correo electronico!');
+                       setTimeout(function(){location.href=dta.url}, 5000);
                      } else if(dta.hasOwnProperty('error')) {
                          $.messager.alert('Error', dta.error, 'error');
                      }
