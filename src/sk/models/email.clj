@@ -36,11 +36,11 @@
    :ssl  true})
 
 (def body
-  {:from    "hectorqlucero@gmail.com"
+  {:from    "escueladeodontologiamxli@lucero-systems.cf"
    :to      "hectorqlucero@gmail.com"
    :subject "Hi!"
    :body    [{:type    "text/html;charset=utf-8"
-              :content "<b>Testing</b>"}]})
+              :content "<b>Testing. Nota: Marco ahora cuando manden un email de escueladeodontologia te va a llegar a ti en marcopescador@hotmail.com y marcopescador@lucero-systems.cf. Despues te explico como funciona esto... Hasta pronto...</b>"}]})
 (defn send-email [host body]
   (send-message host body))
 
