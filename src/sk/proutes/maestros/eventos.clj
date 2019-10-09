@@ -1,6 +1,6 @@
 (ns sk.proutes.maestros.eventos
   (:require [cheshire.core :refer [generate-string]]
-            [sk.models.crud :refer [db Query Save Insert Update config]]
+            [sk.models.crud :refer [db Query Save Insert Update Delete config]]
             [sk.models.grid :refer :all]
             [sk.models.util :refer [get-session-id
                                     get-matricula-id
@@ -296,6 +296,11 @@
     (redirect "/")))
 ;; End Save form
 
+(defn borrar-evento! [{params :params}]
+  (let [id (:id params)]
+    (Delete db :eventos ["id = ?" id])
+    (generate-string {:success "Removido appropiadamente"})))
+
 ;; Start activar eventos
 (def activar-eventos-sql
   "SELECT
@@ -388,7 +393,7 @@
 (defn aprovados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
     (do
-      (let [trows (Query db [resultados_evento-sql 1])
+      (let [trows (Query db [resultados_evento-sql eventos_id])
             rows (map #(if (= (:ok %) 1) %) trows)]
         (render-file "sk/proutes/maestros/resultados.html" {:title "Aprovados"
                                                             :rows (remove nil? rows)})))
@@ -397,7 +402,7 @@
 (defn reprovados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
     (do
-      (let [trows (Query db [resultados_evento-sql 1])
+      (let [trows (Query db [resultados_evento-sql eventos_id])
             rows (map #(if (= (:ok %) 0) %) trows)]
         (render-file "sk/proutes/maestros/resultados.html" {:title "Reprovados"
                                                             :rows (remove nil? rows)})))

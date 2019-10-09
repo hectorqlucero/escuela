@@ -16,6 +16,7 @@
   (POST "/maestros/ceventos/json/grid" request [] (maestros-eventos/grid-eventos request))
   (GET "/maestros/ceventos/json/form/:id" [id] (maestros-eventos/form-eventos id))
   (POST "/maestros/ceventos/save" request [] (maestros-eventos/form-eventos! request))
+  (POST "/maestros/ceventos/delete" request [] (maestros-eventos/borrar-evento! request))
   (GET "/maestros/aeventos" request [] (maestros-eventos/activar-eventos request))
   (GET "/maestros/reventos/:eventos_id" [eventos_id] (maestros-eventos/registrados-eventos eventos_id))
   (GET "/maestros/aprovados/:eventos_id" [eventos_id] (maestros-eventos/aprovados-eventos eventos_id))

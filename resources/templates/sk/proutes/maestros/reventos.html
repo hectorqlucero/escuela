@@ -13,6 +13,7 @@
   <table class="table table-striped w-auto">
     <thead class="thead-dark">
       <tr>
+        <th scope="col">#</th>
         <th scope="col">MATRICULA</th>
         <th scope="col">APELLIDO PATERNO</th>
         <th scope="col">APELLIDO MATERNO</th>
@@ -26,6 +27,7 @@
     <tbody>
         {% for row in rows %}
         <tr>
+        <td>{{ forloop.counter }}</td>
         <td>{{ row.matricula }}</td>
         <td>{{ row.apell_paterno }}</td>
         <td>{{ row.apell_materno }}</td>
