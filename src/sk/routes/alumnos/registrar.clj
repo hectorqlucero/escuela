@@ -59,7 +59,7 @@
         subject "Tu matricula ha sido registrada correctamente"
         content (str "<strong>Hola</strong> " nombre ",</br></br>"
                      "Tu matricula # " (:matricula postvars) " se registro correctamente.  Haz click en salir despues de revisar que los datos sean correctos.</br></br>Sinceramente,</br>Administracion de la escuela de Odontologia")
-        body {:from "escueladeodontologiamxli@lucero-systems.cf"
+        body {:from "escueladeodontologiamxli@fastmail.com"
               :to email
               :subject subject
               :body [{:type "text/html;charset=utf-8"
@@ -94,7 +94,7 @@
                           "Si no solicito resetear su contraseña simplemente ignore este mensage.</br></br></br>"
                           "Sinceramente,</br></br>"
                           "La administracion")
-        body         {:from    "escueladeodontologiamxli@lucero-systems.cf"
+        body         {:from    "escueladeodontologiamxli@fastmail.com"
                       :to      alumno-email
                       :subject subject
                       :body    [{:type    "text/html;charset=utf-8"

@@ -66,7 +66,7 @@
                           "Si no solicito resetear su contraseña simplemente ignore este mensage.</br></br></br>"
                           "Sinceramente,</br></br>"
                           "La administracion")
-        body         {:from    "escueladeodontologiamxli@lucero-systems.cf"
+        body         {:from    "escueladeodontologiamxli@fastmail.com"
                       :to      email
                       :subject subject
                       :body    [{:type    "text/html;charset=utf-8"
