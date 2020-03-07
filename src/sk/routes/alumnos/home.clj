@@ -9,7 +9,7 @@
 
 (defn main [request]
   (render-file "sk/routes/alumnos/home/main.html" {:title "Hacer click en el menu \"Entrar\" para accessar el sitio!"
-                                  :matricula (get-matricula-id)}))
+                                                   :matricula (get-matricula-id)}))
 
 (defn page-error [request]
   (render-file "escuela.html" {:error "No se encuentra la pagina que buscas!"}))
