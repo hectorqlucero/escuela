@@ -1,26 +1,28 @@
 (ns sk.core
   (:gen-class)
-  (:require [sk.models.crud :refer [config db KEY Query]]
-            [sk.models.util :refer [get-session-id get-matricula-id]]
-            [sk.routes :refer [open-routes]]
-            [sk.proutes :refer [proutes]]
-            [compojure.core :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.string :as st]
+            [compojure.core :refer [defroutes routes]]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [noir.session :as session]
             [noir.response :refer [redirect]]
+            [noir.session :as session]
             [ring.adapter.jetty :as jetty]
-            [ring.middleware.defaults :refer :all]
-            [ring.middleware.multipart-params :refer :all]
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.reload :as reload]
-            [ring.middleware.session :refer :all]
-            [ring.middleware.session.cookie :refer :all]
-            [ring.util.anti-forgery :refer :all]
-            [selmer.filters :refer :all]
-            [selmer.parser :refer :all]))
+            [ring.middleware.session :refer [wrap-session]]
+            [ring.middleware.session.cookie :refer [cookie-store]]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
+            [selmer.filters :refer [add-filter!]]
+            [selmer.parser :refer [set-resource-path! add-tag!]]
+            [sk.models.crud :refer [KEY Query config db]]
+            [sk.models.util :refer [get-matricula-id get-session-id]]
+            [sk.proutes :refer [proutes]]
+            [sk.routes :refer [open-routes]]))
 
-(set-resource-path! (clojure.java.io/resource "templates"))
-(add-filter! :format-title (fn [x] [:safe (clojure.string/replace x #"'" "&#145;")]))
+(set-resource-path! (io/resource "templates"))
+(add-filter! :format-title (fn [x] [:safe (st/replace x #"'" "&#145;")]))
 (add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (add-tag! :username
           (fn [_ _]
@@ -33,8 +35,8 @@
   (fn [req]
     (try
       (if (and
-            (nil? (get-session-id))
-            (nil? (get-matricula-id))) (redirect "/") (hdlr req))
+           (nil? (get-session-id))
+           (nil? (get-matricula-id))) (redirect "/") (hdlr req))
       (catch Exception _
         {:status 400 :body "Unable to process your request!"}))))
 

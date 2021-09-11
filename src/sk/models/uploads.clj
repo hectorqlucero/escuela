@@ -1,6 +1,6 @@
 (ns sk.models.uploads
-  (:require [sk.models.crud :refer [config]]
-            [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [sk.models.crud :refer [config]]))
 
 (def UPLOADS (str (config :uploads) "/es/"))
 

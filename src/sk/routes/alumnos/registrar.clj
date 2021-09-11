@@ -1,22 +1,17 @@
 (ns sk.routes.alumnos.registrar
   (:require [cheshire.core :refer [generate-string]]
+            [clojure.string :as st]
             [noir.response :refer [redirect]]
             [noir.session :as session]
             [selmer.parser :refer [render-file]]
-            [sk.models.uploads :refer [upload-photo]]
-            [sk.models.crud :refer [db Query Save Update config]]
+            [sk.models.crud :refer [Query Save Update db]]
             [sk.models.email :refer [host send-email]]
+            [sk.models.uploads :refer [upload-photo]]
             [sk.models.util
              :refer
-             [capitalize-words
-              check-token
-              create-token
-              format-date-internal
-              get-matricula-id
-              get-photo
-              get-reset-url]]))
+             [capitalize-words check-token create-token format-date-internal get-matricula-id get-photo get-reset-url]]))
 
-(defn buscar [request]
+(defn buscar [_]
   (render-file "sk/routes/alumnos/registrar/buscar.html" {:title "Busqueda de Registro"
                                                           :matricula (get-matricula-id)}))
 
@@ -31,7 +26,7 @@
         (generate-string {:url (str "/alumnos/matricula/" matricula)}))
       (generate-string {:url "/alumnos"}))))
 
-(defn registrar [request]
+(defn registrar [_]
   (if (get-matricula-id)
     (render-file "404.html" {:error "Existe una session, no se puede crear una nueva Matricula."
                              :return-url "/alumnos"})
@@ -45,13 +40,13 @@
    :apell_paterno (capitalize-words (:apell_paterno params))
    :apell_materno (capitalize-words (:apell_materno params))
    :nombre        (capitalize-words (:nombre params))
-   :escuela       (clojure.string/upper-case (:escuela params))
+   :escuela       (st/upper-case (:escuela params))
    :carrera       (capitalize-words (:carrera params))
    :semestre      (:semestre params)
    :status        (:status params)
    :fecha_ingreso (format-date-internal (:fecha_ingreso params))
    :fecha_egreso  (format-date-internal (:fecha-egreso params))
-   :email         (clojure.string/lower-case (:email params))})
+   :email         (st/lower-case (:email params))})
 
 (defn create-registrar-email [postvars]
   (let [nombre (str (:nombre postvars) " " (:apell_paterno postvars) " " (:apell_materno postvars))
@@ -101,7 +96,7 @@
                                  :content content}]}]
     body))
 
-(defn reset-password [request]
+(defn reset-password [_]
   (if (get-matricula-id)
     (render-file "404.html" {:error "Existe una session, no se puede cambiar la contraseña"
                              :return-url "/alumnos"})

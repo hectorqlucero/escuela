@@ -1,35 +1,31 @@
 (ns sk.routes.maestros.registrar
   (:require [cheshire.core :refer [generate-string]]
-            [selmer.parser :refer [render-file]]
-            [noir.session :as session]
+            [clojure.string :as st]
             [noir.util.crypt :as crypt]
-            [noir.response :refer [redirect]]
-            [sk.models.crud :refer [db Query Save Update]]
+            [selmer.parser :refer [render-file]]
+            [sk.models.crud :refer [Query Save Update db]]
             [sk.models.email :refer [host send-email]]
-            [sk.models.util :refer [get-session-id
-                                    get-reset-url
-                                    capitalize-words
-                                    check-token
-                                    create-token]]))
+            [sk.models.util :refer [capitalize-words check-token create-token get-reset-url get-session-id]]))
 
 ;; Start registrar
-(defn registrar [secret]
+(defn registrar
   "Registrar un nuevo usuario"
+  [secret]
   (if (get-session-id)
     (render-file "404.html" {:error "Existe una session, no se puede crear un nuevo Usuario."
                              :return-url "/"})
-    (do
-      (if (= secret "elmo1200")
-        (render-file "sk/routes/maestros/registrar/registrar.html" {:title "Registro De usuario"
-                                                                    :ok (get-session-id)})
-        (render-file "404.html" {:error "No se pudo crear el usuario!"
-                                 :return-url "/"})))))
+    (if (= secret "elmo1200")
+      (render-file "sk/routes/maestros/registrar/registrar.html" {:title "Registro De usuario"
+                                                                  :ok (get-session-id)})
+      (render-file "404.html" {:error "No se pudo crear el usuario!"
+                               :return-url "/"}))))
 
-(defn registrar! [{params :params}]
+(defn registrar!
   "Postear los datos de registro de un nuevo cliente el la tabla usuarios"
+  [{params :params}]
   (let [email (or (:email params) "0")
-        postvars {:email (clojure.string/lower-case email)
-                  :username (clojure.string/lower-case email)
+        postvars {:email (st/lower-case email)
+                  :username (st/lower-case email)
                   :firstname (capitalize-words (:firstname params))
                   :lastname (capitalize-words (:lastname params))
                   :password (crypt/encrypt (:password params))
@@ -42,7 +38,7 @@
 ;; End registrar
 
 ;; Start reset-password
-(defn reset-password [request]
+(defn reset-password [_]
   (if (get-session-id)
     (render-file "404.html" {:error "Existe una session, no se puede cambiar la contraseña"
                              :ok (get-session-id)
@@ -53,8 +49,9 @@
 (defn get-username-row [username]
   (first (Query db ["SELECT * FROM users WHERE username = ?" username])))
 
-(defn email-body [row url]
+(defn email-body
   "Crear el cuerpo del email"
+  [row url]
   (let [nombre       (str (:firstname row) " " (:lastname row))
         email        (:email row)
         subject      "Resetear tu contraseña"
@@ -89,8 +86,8 @@
   (let [username (check-token token)]
     (if-not (nil? username)
       (render-file "sk/routes/maestros/registrar/reset_password.html" {:title "Resetear Contraseña"
-                                                              :row (generate-string {:username username})
-                                                              :ok (get-session-id)})
+                                                                       :row (generate-string {:username username})
+                                                                       :ok (get-session-id)})
       (render-file "404.html" {:title "Resetear Contraseña"
                                :return-url "/maestros"
                                :error "Su token es incorrecto o ya expiro!"}))))

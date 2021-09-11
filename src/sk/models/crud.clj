@@ -1,6 +1,7 @@
 (ns sk.models.crud
   (:require [clojure.java.io :as io]
-            [clojure.java.jdbc :as j]))
+            [clojure.java.jdbc :as j]
+            [clojure.string :as st]))
 
 (defn get-config []
   (binding [*read-eval* false]
@@ -34,22 +35,25 @@
 
 (def KEY "897sdn9j98u98kjz")
 
-(defn aes-in [value & alias]
+(defn aes-in
   "Encrypt a value MySQL"
+  [value & alias]
   (str "AES_ENCRYPT('" value "','" SALT "')"
-       (if (seq alias)
+       (when (seq alias)
          (str " as " (first alias)))))
 
-(defn aes-out [value & alias]
+(defn aes-out
   "Decrypt a value MySQL"
+  [value & alias]
   (str "AES_DECRYPT('" value "','" SALT "')"
-       (if (seq alias)
+       (when (seq alias)
          (str " as " (first alias)))))
 
-(defn aes-sel [field & alias]
+(defn aes-sel
   "Return field decrypted MySQL"
+  [field & alias]
   (str "AES_DECRYPT(" field ",'" SALT "')"
-       (if (seq alias)
+       (when (seq alias)
          (str " as " (first alias)))))
 
 (def phone_mask "(___) ___-____")
@@ -63,7 +67,7 @@
 (def n5_mask "_____")
 
 (defn cleanup_blanks [v]
-  (when-not (clojure.string/blank? v) v))
+  (when-not (st/blank? v) v))
 
 (defn cleanup_phones [v]
   (when-not (= v phone_mask) v))
@@ -80,8 +84,9 @@
 (defn cleanup_n5 [v]
   (when-not (= v n5_mask) v))
 
-(defn cleanup [row]
+(defn cleanup
   "Cleanup row - convert masks or blanks into nil"
+  [row]
   (apply merge
          (for [[k v] row]
            (let [value (and (cleanup_blanks v)
@@ -132,8 +137,9 @@
         (j/insert! t-con table (cleanup row) {:entities (j/quoted \`)})
         result))))
 
-(defn get-table-columns [table]
+(defn get-table-columns
   "Get table column names in a vector"
+  [table]
   (let [the-fields (Query db (str "DESCRIBE " table))
         tfields (map #(:field %) the-fields)]
     (into [] tfields)))

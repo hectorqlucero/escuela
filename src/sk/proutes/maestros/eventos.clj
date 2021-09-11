@@ -1,19 +1,11 @@
 (ns sk.proutes.maestros.eventos
   (:require [cheshire.core :refer [generate-string]]
-            [sk.models.crud :refer [db Query Save Insert Update Delete config]]
-            [sk.models.grid :refer :all]
-            [sk.models.util :refer [get-session-id
-                                    get-matricula-id
-                                    parse-int
-                                    capitalize-words
-                                    current_time_internal
-                                    today-internal
-                                    format-date-internal]]
             [clojure.java.io :as io]
-            [noir.session :as session]
-            [noir.util.crypt :as crypt]
             [noir.response :refer [redirect]]
-            [selmer.parser :refer [render-file]]))
+            [selmer.parser :refer [render-file]]
+            [sk.models.crud :refer [Delete Insert Query Save Update config db]]
+            [sk.models.grid :refer [convert-search-columns grid-offset grid-rows grid-search grid-sort]]
+            [sk.models.util :refer [current_time_internal format-date-internal get-matricula-id get-session-id parse-int today-internal]]))
 
 ;; Start padron
 (def padron-sql
@@ -29,14 +21,13 @@
    apell_materno,
    nombre")
 
-(defn padron [request]
+(defn padron [_]
   (if-not (nil? (get-session-id))
-    (do
-      (let [title "Padron de Alumnos"
-            rows (Query db padron-sql)]
-        (render-file "sk/proutes/maestros/padron.html" {:title title
-                                                        :rows rows
-                                                        :ok (get-session-id)})))
+    (let [title "Padron de Alumnos"
+          rows (Query db padron-sql)]
+      (render-file "sk/proutes/maestros/padron.html" {:title title
+                                                      :rows rows
+                                                      :ok (get-session-id)}))
     (redirect "/")))
 ;; End padron
 
@@ -70,16 +61,15 @@
 
 (defn eventos [eventos_id]
   (if-not (nil? (get-session-id))
-    (do
-      (let [title "Eventos"
-            matricula (get-matricula-id)
-            row (first (Query db [eventos-sql eventos_id]))
-            erows (Query db [registro_evento-sql matricula])]
-        (render-file "sk/proutes/maestros/peventos.html" {:title title
-                                                          :matricula matricula
-                                                          :path (str (:path config) "eventos/")
-                                                          :row row
-                                                          :erows erows})))
+    (let [title "Eventos"
+          matricula (get-matricula-id)
+          row (first (Query db [eventos-sql eventos_id]))
+          erows (Query db [registro_evento-sql matricula])]
+      (render-file "sk/proutes/maestros/peventos.html" {:title title
+                                                        :matricula matricula
+                                                        :path (str (:path config) "eventos/")
+                                                        :row row
+                                                        :erows erows}))
     (redirect "/")))
 ;; End eventos
 
@@ -95,26 +85,31 @@
    ORDER BY id DESC
    LIMIT 1")
 
-(defn valid-matricula [matricula_id]
+(defn valid-matricula
   "Revisar si existe un alumno con la matricula especificiada"
+  [matricula_id]
   (let [record (first (Query db ["SELECT matricula FROM alumnos WHERE matricula = ?" matricula_id]))
         result (if (seq record) 1 nil)]
     result))
 
-(defn matricula-exists [matricula_id eventos_id]
+(defn matricula-exists
   "Revisar si existen datos pertinentes en la tabla registro_evento"
+  [matricula_id eventos_id]
   (if (seq (first (Query db [matricula-sql eventos_id matricula_id]))) 1 nil))
 
-(defn evento-start-check [row]
+(defn evento-start-check
   "Revisar si ya hay un dato de hora_entrada en la tabla registro_evento"
+  [row]
   (if-not (nil? (:hora_entrada row)) 1 nil))
 
-(defn evento-end-check [row]
+(defn evento-end-check
   "Revisar si ya hay un dato de hora_salida en la tabla registro_evento"
+  [row]
   (if-not (nil? (:hora_salida row)) 1 nil))
 
-(defn crear [matricula_id eventos_id]
+(defn crear
   "Crear un record en la tabla registro_evento"
+  [matricula_id eventos_id]
   (let [postvars {:matricula_id (str matricula_id)
                   :eventos_id (str eventos_id)
                   :hora_entrada (current_time_internal)
@@ -122,8 +117,9 @@
         result (Insert db :registro_evento postvars)]
     result))
 
-(defn actualizar [matricula_id registro_evento_id eventos_id start-exists end-exists]
+(defn actualizar
   "Actualizar un record en la tabla registro_evento cuando existen datos o crear un nuevo record"
+  [matricula_id registro_evento_id eventos_id start-exists end-exists]
   (let [postvars (if (nil? start-exists)
                    {:hora_entrada (current_time_internal)}
                    {:hora_salida (current_time_internal)})
@@ -149,39 +145,37 @@
                       (= end-exists 1)) "Entrada")]
     status))
 
-(defn processar [matricula_id eventos_id]
+(defn processar
   "Processar datos de los eventos y crear/modificar records o regresar un error"
+  [matricula_id eventos_id]
   (if-not (nil? (get-session-id))
-    (do
-      (let [row (first (Query db [matricula-sql eventos_id matricula_id]))
-            registro_evento_id (:id row)
-            alumno-nombre (get-alumno-name matricula_id)
-            data-exists (matricula-exists matricula_id eventos_id)
-            start-exists (evento-start-check row)
-            end-exists (evento-end-check row)
-            valid-alumno (valid-matricula matricula_id)
-            status (get-status data-exists start-exists end-exists)
-            error (if (nil? valid-alumno)
-                    "Matricula no existe!"
-                    "Fallo registro!")
-            result (if-not (nil? valid-alumno)
-                     (do
-                       (if (nil? data-exists)
-                         (crear matricula_id eventos_id)
-                         (actualizar matricula_id registro_evento_id eventos_id start-exists end-exists)))
-                     nil)]
-        (if (seq result)
-          (generate-string {:success (str alumno-nombre " - Registro de " status " processado!")})
-          (generate-string {:error error}))))
+    (let [row (first (Query db [matricula-sql eventos_id matricula_id]))
+          registro_evento_id (:id row)
+          alumno-nombre (get-alumno-name matricula_id)
+          data-exists (matricula-exists matricula_id eventos_id)
+          start-exists (evento-start-check row)
+          end-exists (evento-end-check row)
+          valid-alumno (valid-matricula matricula_id)
+          status (get-status data-exists start-exists end-exists)
+          error (if (nil? valid-alumno)
+                  "Matricula no existe!"
+                  "Fallo registro!")
+          result (if-not (nil? valid-alumno)
+                   (if (nil? data-exists)
+                     (crear matricula_id eventos_id)
+                     (actualizar matricula_id registro_evento_id eventos_id start-exists end-exists))
+                   nil)]
+      (if (seq result)
+        (generate-string {:success (str alumno-nombre " - Registro de " status " processado!")})
+        (generate-string {:error error})))
     (redirect "/")))
 ;; End processar
 
-(defn crear-eventos [request]
+(defn crear-eventos [_]
   (if-not (nil? (get-session-id))
-    (do
-      (render-file "sk/proutes/maestros/eventos.html" {:title "Mantenimiento de Eventos"
-                                                       :path (str (:path config) "eventos/")
-                                                       :ok (get-session-id)}))
+    (render-file "sk/proutes/maestros/eventos.html" {:title "Mantenimiento de Eventos"
+                                                     :path (str (:path config) "eventos/")
+                                                     :ok (get-session-id)})
     (redirect "/")))
 
 ;; Start eventos grid
@@ -211,19 +205,17 @@
 
 (defn grid-eventos [{params :params}]
   (if-not (nil? (get-session-id))
-    (do
-      (try
-        (let [table "eventos"
-              scolumns (convert-search-columns search-columns)
-              aliases aliases-columns
-              join ""
-              search (grid-search (:search params nil) scolumns)
-              order (grid-sort (:sort params nil) (:order params nil))
-              offset (grid-offset (parse-int (:rows params)) (parse-int (:page params)))
-              sql (grid-sql table aliases join search order offset)
-              rows (grid-rows table aliases join search order offset)]
-          (generate-string rows))
-        (catch Exception e (.getMessage e))))
+    (try
+      (let [table "eventos"
+            scolumns (convert-search-columns search-columns)
+            aliases aliases-columns
+            join ""
+            search (grid-search (:search params nil) scolumns)
+            order (grid-sort (:sort params nil) (:order params nil))
+            offset (grid-offset (parse-int (:rows params)) (parse-int (:page params)))
+            rows (grid-rows table aliases join search order offset)]
+        (generate-string rows))
+      (catch Exception e (.getMessage e)))
     (redirect "/")))
 ;; End eventos grid
 
@@ -246,27 +238,23 @@
 
 (defn form-eventos [id]
   (if-not (nil? (get-session-id))
-    (do
-      (try
-        (let [row (first (Query db [eventos-form-sql id]))]
-          (generate-string row))
-        (catch Exception e (.getMessage e))))
+    (try
+      (let [row (first (Query db [eventos-form-sql id]))]
+        (generate-string row))
+      (catch Exception e (.getMessage e)))
     (redirect "/")))
 ;; End eventos form
 
 ;; Start Save form
 (def UPLOADS (str (config :uploads) "/es/eventos/"))
 
-(defn upload-imagen [file id]
+(defn upload-imagen [file _]
   (let [tempfile  (:tempfile file)
         size      (:size file)
-        type      (:content-type file)
-        extension (peek (clojure.string/split type #"\/"))
-        extension (if (= extension "jpeg") "jpg" "jpg")
         foto      (:filename file)
-        result    (if-not (zero? size)
-                    (do (io/copy tempfile (io/file (str UPLOADS foto)))))]
-    foto))
+        result    (when-not (zero? size)
+                    (io/copy tempfile (io/file (str UPLOADS foto))))]
+    (if result foto result)))
 
 (defn create-data [params]
   {:categorias_id (:categorias_id params)
@@ -282,17 +270,16 @@
 
 (defn form-eventos! [{params :params}]
   (if-not (nil? (get-session-id))
-    (do
-      (let [id (or (:id params) "0")
-            file (:file params)
-            imagen (if-not (zero? (:size file))
-                     (upload-imagen file id)
-                     (:imagen params))
-            postvars (assoc (create-data params) :id id :imagen imagen)
-            result (Save db :eventos postvars ["id = ?" id])]
-        (if (seq result)
-          (generate-string {:success "Record processado correctamente!"})
-          (generate-string {:error "Error, no se pudo processar el record!"}))))
+    (let [id (or (:id params) "0")
+          file (:file params)
+          imagen (if-not (zero? (:size file))
+                   (upload-imagen file id)
+                   (:imagen params))
+          postvars (assoc (create-data params) :id id :imagen imagen)
+          result (Save db :eventos postvars ["id = ?" id])]
+      (if (seq result)
+        (generate-string {:success "Record processado correctamente!"})
+        (generate-string {:error "Error, no se pudo processar el record!"})))
     (redirect "/")))
 ;; End Save form
 
@@ -317,12 +304,11 @@
 
 (defn activar-eventos [_]
   (if-not (nil? (get-session-id))
-    (do
-      (render-file "sk/proutes/maestros/aeventos.html" {:title "Activar Eventos"
-                                                        :rows (Query db activar-eventos-sql)
-                                                        :path (str (:path config) "eventos/")
-                                                        :epath "/eventos/"
-                                                        :ok (get-session-id)}))
+    (render-file "sk/proutes/maestros/aeventos.html" {:title "Activar Eventos"
+                                                      :rows (Query db activar-eventos-sql)
+                                                      :path (str (:path config) "eventos/")
+                                                      :epath "/eventos/"
+                                                      :ok (get-session-id)})
     (redirect "/")))
 ;; End activar eventos
 
@@ -351,9 +337,8 @@
 
 (defn registrados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
-    (do
-      (render-file "sk/proutes/maestros/reventos.html" {:title "Registrados"
-                                                        :rows (Query db [registrados-sql eventos_id])}))
+    (render-file "sk/proutes/maestros/reventos.html" {:title "Registrados"
+                                                      :rows (Query db [registrados-sql eventos_id])})
     (redirect "/")))
 ;; End registrados eventos
 
@@ -384,26 +369,23 @@
 
 (defn resultados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
-    (do
-      (render-file "sk/proutes/maestros/resultados.html" {:title "Resultados"
-                                                          :rows (Query db [resultados_evento-sql eventos_id])}))
+    (render-file "sk/proutes/maestros/resultados.html" {:title "Resultados"
+                                                        :rows (Query db [resultados_evento-sql eventos_id])})
     (redirect "/")))
 ;; End resultados
 
 (defn aprovados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
-    (do
-      (let [trows (Query db [resultados_evento-sql eventos_id])
-            rows (map #(if (= (:ok %) 1) %) trows)]
-        (render-file "sk/proutes/maestros/resultados.html" {:title "Aprovados"
-                                                            :rows (remove nil? rows)})))
+    (let [trows (Query db [resultados_evento-sql eventos_id])
+          rows (map #(when (= (:ok %) 1) %) trows)]
+      (render-file "sk/proutes/maestros/resultados.html" {:title "Aprovados"
+                                                          :rows (remove nil? rows)}))
     (redirect "/")))
 
 (defn reprovados-eventos [eventos_id]
   (if-not (nil? (get-session-id))
-    (do
-      (let [trows (Query db [resultados_evento-sql eventos_id])
-            rows (map #(if (= (:ok %) 0) %) trows)]
-        (render-file "sk/proutes/maestros/resultados.html" {:title "Reprovados"
-                                                            :rows (remove nil? rows)})))
+    (let [trows (Query db [resultados_evento-sql eventos_id])
+          rows (map #(when (= (:ok %) 0) %) trows)]
+      (render-file "sk/proutes/maestros/resultados.html" {:title "Reprovados"
+                                                          :rows (remove nil? rows)}))
     (redirect "/")))

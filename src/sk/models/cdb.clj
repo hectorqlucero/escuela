@@ -1,5 +1,5 @@
 (ns sk.models.cdb
-  (:require [sk.models.crud :refer :all]
+  (:require [sk.models.crud :refer [Query! db Insert Insert-multi]]
             [noir.util.crypt :as crypt]))
 
 ;; Start users table
@@ -120,9 +120,10 @@
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 ;; End registro_evento table
 
-(defn create-database []
+(defn create-database
   "Creates database tables and default admin users
    Note: First create the database on MySQL with any client"
+  []
   (Query! db users-sql)
   (Insert-multi db :users user-rows)
   (Query! db categorias-sql)
@@ -131,8 +132,9 @@
   (Query! db eventos-sql)
   (Query! db registro_evento-sql))
 
-(defn reset-database []
+(defn reset-database
   "Removes existing tables and re-creates them"
+  []
   (Query! db "DROP table IF EXISTS registro_evento")
   (Query! db "DROP table IF EXISTS eventos")
   (Query! db "DROP table IF EXISTS alumnos")
@@ -146,8 +148,9 @@
   (Query! db eventos-sql)
   (Query! db registro_evento-sql))
 
-(defn migrate []
+(defn migrate
   "Migrate by the seat of my pants"
+  []
   (Query! db "DROP table IF EXISTS registro_evento")
   (Query! db "DROP table IF EXISTS eventos")
   (Query! db "DROP table IF EXISTS alumnos")
@@ -317,6 +320,5 @@
                                 :eventos_id "1"
                                 :fecha "2019-09-13"
                                 :hora_entrada "15:20:00"
-                                :hora_salida "18:06:00"})
-  )
+                                :hora_salida "18:06:00"}))
 ;;(create-database)

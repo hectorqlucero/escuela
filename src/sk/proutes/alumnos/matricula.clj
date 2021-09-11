@@ -1,16 +1,12 @@
 (ns sk.proutes.alumnos.matricula
   (:require [cheshire.core :refer (generate-string)]
-            [clojure.java.io :as io]
-            [noir.session :as session]
+            [clojure.string :as st]
             [noir.response :refer [redirect]]
+            [noir.session :as session]
             [selmer.parser :refer [render-file]]
+            [sk.models.crud :refer [Query Save db]]
             [sk.models.uploads :refer [upload-photo]]
-            [sk.models.crud :refer [db config Query Save]]
-            [sk.models.util :refer [get-photo
-                                    parse-int
-                                    get-matricula-id
-                                    format-date-internal
-                                    capitalize-words]]))
+            [sk.models.util :refer [capitalize-words format-date-internal get-matricula-id get-photo parse-int]]))
 
 ;; Start matricula
 (def matricula-sql
@@ -32,13 +28,12 @@
 
 (defn matricula [matricula]
   (if (= (parse-int matricula) (parse-int (get-matricula-id)))
-    (do
-      (let [row (first (Query db [matricula-sql matricula]))]
-        (render-file "sk/proutes/alumnos/matricula/matricula.html"
-                     {:title "Registro De Alumno"
-                      :matricula matricula
-                      :foto (get-photo "alumnos" "foto" "matricula" matricula)
-                      :row (generate-string row)})))
+    (let [row (first (Query db [matricula-sql matricula]))]
+      (render-file "sk/proutes/alumnos/matricula/matricula.html"
+                   {:title "Registro De Alumno"
+                    :matricula matricula
+                    :foto (get-photo "alumnos" "foto" "matricula" matricula)
+                    :row (generate-string row)}))
     (redirect "/")))
 ;; End matricula
 

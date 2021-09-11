@@ -1,11 +1,11 @@
 (ns sk.routes.maestros.home
   (:require [cheshire.core :refer [generate-string]]
-            [sk.models.crud :refer [db Query]]
-            [sk.models.util :refer [get-session-id]]
+            [noir.response :refer [redirect]]
             [noir.session :as session]
             [noir.util.crypt :as crypt]
-            [noir.response :refer [redirect]]
-            [selmer.parser :refer [render-file]]))
+            [selmer.parser :refer [render-file]]
+            [sk.models.crud :refer [Query db]]
+            [sk.models.util :refer [get-session-id]]))
 
 ;; Start Main
 (def main-sql
@@ -21,27 +21,26 @@
                 "Hacer clic en el menu \"Entrar\" para accessar el sitio")]
     title))
 
-(defn main [request]
+(defn main [_]
   (render-file "sk/routes/maestros/home/main.html" {:title (get-main-title)
-                                      :ok (get-session-id)}))
+                                                    :ok (get-session-id)}))
 ;; End main
 
 (defn login [_]
   (if-not (nil? (get-session-id))
     (redirect "/")
     (render-file "sk/routes/maestros/home/login.html" {:title "Accesar al Sitio!"
-                                         :ok (get-session-id)})))
+                                                       :ok (get-session-id)})))
 
 (defn login! [username password]
   (let [row    (first (Query db ["select * from users where username = ?" username]))
         active (:active row)]
     (if (= active "T")
-      (do
-        (if (crypt/compare password (:password row))
-          (do
-            (session/put! :user_id (:id row))
-            (generate-string {:url "/maestros"}))
-          (generate-string {:error "Hay problemas para accesar el sitio!"})))
+      (if (crypt/compare password (:password row))
+        (do
+          (session/put! :user_id (:id row))
+          (generate-string {:url "/maestros"}))
+        (generate-string {:error "Hay problemas para accesar el sitio!"}))
       (generate-string {:error "El usuario esta inactivo!"}))))
 
 (defn logoff []
