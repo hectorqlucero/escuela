@@ -96,7 +96,6 @@
    CONSTRAINT `fk_eventos_categorias`
    FOREIGN KEY (categorias_id) REFERENCES categorias (id)
    ON DELETE CASCADE
-   ON UPDATE RESTRICT
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 ;; End eventos table
 
@@ -111,14 +110,82 @@
    fecha date DEFAULT NULL,
    CONSTRAINT `fk_registro_evento_alumnos`
    FOREIGN KEY (matricula_id) REFERENCES alumnos (matricula)
-   ON DELETE CASCADE
-   ON UPDATE RESTRICT,
+   ON DELETE CASCADE,
    CONSTRAINT `fk_registro_evento_eventos`
    FOREIGN KEY (eventos_id) REFERENCES eventos (id)
    ON DELETE CASCADE
-   ON UPDATE RESTRICT
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 ;; End registro_evento table
+
+;; Start asignatura table
+(def asignatura-sql
+  "CREATE TABLE asignatura (
+   id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   nombre varchar(200) DEFAULT NULL
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End asignatura table
+
+;; Start escuela table
+(def escuela-sql
+  "CREATE TABLE escuela (
+   id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   ct varchar(100) DEFAULT NULL,
+   nombre varchar(200) DEFAULT NULL,
+   tipo char(1) NOT NULL COMMENT='P=primaria,S=secundaria',
+   UNIQUE KEY ct (ct)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End escuela table
+
+;; Start grado table
+(def grado-sql
+  "CREATE TABLE grado (
+   id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   grado int NOT NULL
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End grado table
+
+;; Start opciones table
+(def opciones-sql
+  "CREATE TABLE opciones (
+   `id` int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   `opcion` varchar(800) DEFAULT NULL,
+   `preguntas_id` int DEFAULT NULL
+   KEY `fk_preguntas` (`preguntas_id`),
+   CONSTRAINT `fk_preguntas` FOREIGN KEY (`preguntas_id`) REFERENCES `preguntas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End opciones table
+
+;; Start preguntas table
+(def preguntas-sql
+  "CREATE TABLE `preguntas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pregunta` varchar(800) DEFAULT NULL,
+  `escuela_id` int NOT NULL,
+  `asignatura_id` int NOT NULL,
+  `grado_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_escuela` (`escuela_id`),
+  KEY `fk_asignatura` (`asignatura_id`),
+  KEY `fk_grado` (`grado_id`),
+  CONSTRAINT `fk_asignatura` FOREIGN KEY (`asignatura_id`) REFERENCES `asignatura` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_escuela` FOREIGN KEY (`escuela_id`) REFERENCES `escuela` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_grado` FOREIGN KEY (`grado_id`) REFERENCES `grado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End preguntas table
+
+;; Start respuestas table
+(def respuestas-sql
+  "CREATE TABLE `respuestas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `preguntas_id` int NOT NULL,
+  `opciones_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_preguntas_id` (`preguntas_id`),
+  KEY `fk_opciones_id` (`opciones_id`),
+  CONSTRAINT `fk_opciones_id` FOREIGN KEY (`opciones_id`) REFERENCES `opciones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_preguntas_id` FOREIGN KEY (`preguntas_id`) REFERENCES `preguntas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End respuestad table
 
 (defn create-database
   "Creates database tables and default admin users
