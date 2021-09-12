@@ -187,6 +187,22 @@
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 ;; End respuestad table
 
+;; Start correos table
+(def registro_correos-sql
+  "CREATE TABLE `registro_correos` (
+   `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   `matricula_id` int unsigned NOT NULL,
+   `eventos_id` int unsigned NOT NULL,
+   `hora_mandar` time DEFAULT NULL,
+   `hora_recibir` time DEFAULT NULL,
+   `fecha` date DEFAULT NULL,
+   KEY `fk_registro_correos_alumnos` (`matricula_id`),
+   KEY `fk_registro_correos_eventos` (`eventos_id`),
+   CONSTRAINT `fk_registro_correos_alumnos` FOREIGN KEY (`matricula_id`) REFERENCES `alumnos` (`matricula`) ON DELETE CASCADE,
+   CONSTRAINT `fk_registro_correos_eventos` FOREIGN KEY (`eventos_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+;; End correos table
+
 (defn create-database
   "Creates database tables and default admin users
    Note: First create the database on MySQL with any client"
