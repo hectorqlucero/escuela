@@ -251,7 +251,7 @@
 (defn money-format [bd]
   (if (number? bd)
     (mf/format (ma/amount-of mc/USD bd))
-    (mf/format (ma/amount-of mc/USD 0))))
+    (mf/format (ma/amount-of mc/USD 0.00))))
 
 (defn spl
   "n=number,c=pad number,p=padding str"
