@@ -23,8 +23,8 @@
   (GET "/maestros/reprovados/:eventos_id" [eventos_id] (maestros-eventos/reprovados-eventos eventos_id))
   (GET "/maestros/resultados/:eventos_id" [eventos_id] (maestros-eventos/resultados-eventos eventos_id))
   ;; End maestros-eventos
-  ;; Start recivir/mandar correos
+  ;; Start recibir/mandar correos
   (GET "/maestros/correos/mandar/:matricula_id/:eventos_id" [matricula_id eventos_id] (maestros-eventos/correos-mandar matricula_id eventos_id))
   (GET "/maestros/correos/recibir/:id" [id] (maestros-eventos/correos-recibir id))
-  ;; End recivir/mandar correos
+  ;; End recibir/mandar correos
   )

@@ -3,7 +3,6 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as st]
             [compojure.core :refer [defroutes routes]]
-            [compojure.handler :as handler]
             [compojure.route :as route]
             [noir.response :refer [redirect]]
             [noir.session :as session]
@@ -65,7 +64,6 @@
         (wrap-login protected-routes)
         (wrap-exception-handling protected-routes)
         app-routes)
-       (handler/site)
        (wrap-session)
        (session/wrap-noir-session*)
        (wrap-multipart-params)

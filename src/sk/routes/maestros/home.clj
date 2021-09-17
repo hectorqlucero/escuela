@@ -46,4 +46,3 @@
 (defn logoff []
   (session/remove! :user_id)
   (redirect "/maestros"))
-
