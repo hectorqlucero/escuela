@@ -70,7 +70,12 @@ body, html {
       $("#clock").html(data);
     });
   }
+  function updateEmail(matricula, eventos_id) {
+    var url = "/maestros/correos/mandar/" + matricula + "/" + eventos_id;
+    $.get(url);
+  }
 function validate(matricula) {
+  setInterval("updateEmail(" + matricula +  ", {{ row.id }})", 30000);
   var url = "/eventos/processar/" + matricula + "/{{ row.id }}";
   $.get(url,function(data) {
     var dta = JSON.parse(data);

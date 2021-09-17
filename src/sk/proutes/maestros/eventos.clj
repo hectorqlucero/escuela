@@ -4,8 +4,9 @@
             [noir.response :refer [redirect]]
             [selmer.parser :refer [render-file]]
             [sk.models.crud :refer [Delete Insert Query Save Update config db]]
+            [sk.models.email :refer [host send-email]]
             [sk.models.grid :refer [convert-search-columns grid-offset grid-rows grid-search grid-sort]]
-            [sk.models.util :refer [current_time_internal format-date-internal get-matricula-id get-session-id parse-int today-internal]]))
+            [sk.models.util :refer [current_date current_time_internal format-date-internal get-matricula-id get-session-id parse-int today-internal]]))
 
 ;; Start padron
 (def padron-sql
@@ -62,11 +63,13 @@
 (defn eventos [eventos_id]
   (if-not (nil? (get-session-id))
     (let [title "Eventos"
+          etime (:email_seconds config)
           matricula (get-matricula-id)
           row (first (Query db [eventos-sql eventos_id]))
           erows (Query db [registro_evento-sql matricula])]
       (render-file "sk/proutes/maestros/peventos.html" {:title title
                                                         :matricula matricula
+                                                        :etime etime
                                                         :path (str (:path config) "eventos/")
                                                         :row row
                                                         :erows erows}))
@@ -389,3 +392,36 @@
       (render-file "sk/proutes/maestros/resultados.html" {:title "Reprovados"
                                                           :rows (remove nil? rows)}))
     (redirect "/")))
+
+;; Start correos-mandar
+(defn build-correos-email-body [id matricula_id]
+  (let [row (first (Query db ["select * from alumnos where matricula = ?" matricula_id]))
+        nombre (str (:nombre row) " " (:apell_paterno row) " " (:apell_materno row))
+        alumno-email (:email row)
+        subject (str "Hola " nombre ", por favor hacer click en el link del correo!")
+        url (str "<a href='http://localhost:3000/maestros/correos/recibir/" id "'>CLic aqui para confirmar asistencia al evento!</a>")
+        body {:from "hectorqlucero@fastmail.com"
+              :to alumno-email
+              :subject subject
+              :body [{:type "text/html;charset=utf-8"
+                      :content url}]}]
+    body))
+
+(defn correos-mandar [matricula_id eventos_id]
+  (let [hora_mandar (current_time_internal)
+        fecha (format-date-internal (current_date))
+        rows {:matricula_id matricula_id
+              :eventos_id eventos_id
+              :hora_mandar hora_mandar
+              :fecha fecha}
+        result (Save db :registro_correos rows ["eventos_id = ? and matricula_id = ? and hora_mandar = ? and fecha = ?" eventos_id matricula_id hora_mandar fecha])
+        r-correos-id (or (:generated_key (first result)) nil)
+        email-body (when r-correos-id (build-correos-email-body r-correos-id matricula_id))]
+    (when email-body (send-email host email-body))))
+;; End correos-mandar
+
+(defn correos-recibir [id]
+  (let [hora-recibir (current_time_internal)
+        row {:hora_recibir hora-recibir}
+        result (Update db :registro_correos row ["id = ?" id])]
+    result))

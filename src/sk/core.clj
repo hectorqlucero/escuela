@@ -15,7 +15,7 @@
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [selmer.filters :refer [add-filter!]]
-            [selmer.parser :refer [set-resource-path! add-tag!]]
+            [selmer.parser :refer [add-tag! set-resource-path!]]
             [sk.models.crud :refer [KEY Query config db]]
             [sk.models.util :refer [get-matricula-id get-session-id]]
             [sk.proutes :refer [proutes]]
