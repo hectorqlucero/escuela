@@ -1,5 +1,5 @@
 (ns sk.models.cdb
-  (:require [sk.models.crud :refer [Query! db Insert Insert-multi]]
+  (:require [sk.models.crud :refer [Query! db Insert-multi]]
             [noir.util.crypt :as crypt]))
 
 ;; Start users table
@@ -117,77 +117,7 @@
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
 ;; End registro_evento table
 
-;; Start asignatura table
-(def asignatura-sql
-  "CREATE TABLE asignatura (
-   id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   nombre varchar(200) DEFAULT NULL
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End asignatura table
-
-;; Start escuela table
-(def escuela-sql
-  "CREATE TABLE escuela (
-   id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   ct varchar(100) DEFAULT NULL,
-   nombre varchar(200) DEFAULT NULL,
-   tipo char(1) NOT NULL COMMENT='P=primaria,S=secundaria',
-   UNIQUE KEY ct (ct)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End escuela table
-
-;; Start grado table
-(def grado-sql
-  "CREATE TABLE grado (
-   id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   grado int NOT NULL
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End grado table
-
-;; Start opciones table
-(def opciones-sql
-  "CREATE TABLE opciones (
-   `id` int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   `opcion` varchar(800) DEFAULT NULL,
-   `preguntas_id` int DEFAULT NULL
-   KEY `fk_preguntas` (`preguntas_id`),
-   CONSTRAINT `fk_preguntas` FOREIGN KEY (`preguntas_id`) REFERENCES `preguntas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End opciones table
-
-;; Start preguntas table
-(def preguntas-sql
-  "CREATE TABLE `preguntas` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `pregunta` varchar(800) DEFAULT NULL,
-  `escuela_id` int NOT NULL,
-  `asignatura_id` int NOT NULL,
-  `grado_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_escuela` (`escuela_id`),
-  KEY `fk_asignatura` (`asignatura_id`),
-  KEY `fk_grado` (`grado_id`),
-  CONSTRAINT `fk_asignatura` FOREIGN KEY (`asignatura_id`) REFERENCES `asignatura` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_escuela` FOREIGN KEY (`escuela_id`) REFERENCES `escuela` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_grado` FOREIGN KEY (`grado_id`) REFERENCES `grado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End preguntas table
-
-;; Start respuestas table
-(def respuestas-sql
-  "CREATE TABLE `respuestas` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `preguntas_id` int NOT NULL,
-  `opciones_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_preguntas_id` (`preguntas_id`),
-  KEY `fk_opciones_id` (`opciones_id`),
-  CONSTRAINT `fk_opciones_id` FOREIGN KEY (`opciones_id`) REFERENCES `opciones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_preguntas_id` FOREIGN KEY (`preguntas_id`) REFERENCES `preguntas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End respuestad table
-
-;; Start correos table
+;; Start registro_correos table
 (def registro_correos-sql
   "CREATE TABLE `registro_correos` (
    `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -201,207 +131,40 @@
    CONSTRAINT `fk_registro_correos_alumnos` FOREIGN KEY (`matricula_id`) REFERENCES `alumnos` (`matricula`) ON DELETE CASCADE,
    CONSTRAINT `fk_registro_correos_eventos` FOREIGN KEY (`eventos_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
-;; End correos table
+;; End registro_correos table
 
-(defn create-database
-  "Creates database tables and default admin users
-   Note: First create the database on MySQL with any client"
-  []
-  (Query! db users-sql)
-  (Insert-multi db :users user-rows)
-  (Query! db categorias-sql)
-  (Insert-multi db :categorias categorias-rows)
-  (Query! db alumnos-sql)
-  (Query! db eventos-sql)
-  (Query! db registro_evento-sql))
-
-(defn reset-database
-  "Removes existing tables and re-creates them"
+(defn drop-tables
+  "Drops tables if they exist"
   []
   (Query! db "DROP table IF EXISTS registro_evento")
-  (Query! db "DROP table IF EXISTS eventos")
-  (Query! db "DROP table IF EXISTS alumnos")
-  (Query! db "DROP table IF EXISTS categorias")
-  (Query! db "DROP table IF EXISTS users")
-  (Query! db users-sql)
-  (Insert-multi db :users user-rows)
-  (Query! db categorias-sql)
-  (Insert-multi db :categorias categorias-rows)
-  (Query! db alumnos-sql)
-  (Query! db eventos-sql)
-  (Query! db registro_evento-sql))
+  (Query! db "DROP table if EXISTS registro_correos")
+  (Query! db "DROP table if EXISTS eventos")
+  (Query! db "DROP table if EXISTS alumnos")
+  (Query! db "DROP table if EXISTS categorias")
+  (Query! db "DROP table if EXISTS users"))
 
-(defn migrate
-  "Migrate by the seat of my pants"
+(defn create-tables
+  "Creates tables"
   []
-  (Query! db "DROP table IF EXISTS registro_evento")
-  (Query! db "DROP table IF EXISTS eventos")
-  (Query! db "DROP table IF EXISTS alumnos")
+  (Query! db users-sql)
+  (Query! db categorias-sql)
   (Query! db alumnos-sql)
   (Query! db eventos-sql)
   (Query! db registro_evento-sql)
-  (Insert db "alumnos" {:matricula "28787"
-                        :password "elmo1200"
-                        :apell_paterno "Pacas"
-                        :apell_materno "Verdes"
-                        :nombre "Pedro"
-                        :escuela "CSULB"
-                        :carrera "Programacion"
-                        :semestre "8"
-                        :status "A"
-                        :email "pedropacas@servidor.com"})
-  (Insert db "alumnos" {:matricula "28788"
-                        :password "101117"
-                        :apell_paterno "Pacas"
-                        :apell_materno "Azules"
-                        :nombre "Maria"
-                        :escuela "UABC"
-                        :carrera "Programacion"
-                        :semestre "8"
-                        :status "A"
-                        :email "mariapacas@servidor.com"})
-  (Insert db "alumnos" {:matricula "28789"
-                        :password "101117"
-                        :apell_paterno "Paredes"
-                        :apell_materno "Robles"
-                        :nombre "Adrian"
-                        :escuela "UABC"
-                        :carrera "Programacion"
-                        :semestre "8"
-                        :status "A"
-                        :email "adrianpardes@servidor.com"})
-  (Insert db "alumnos" {:matricula "28790"
-                        :password "101117"
-                        :apell_paterno "Pacas"
-                        :apell_materno "Azules"
-                        :nombre "Maribel"
-                        :escuela "UABC"
-                        :carrera "Programacion"
-                        :semestre "8"
-                        :status "A"
-                        :email "maribelpacas@servidor.com"})
-  (Insert db "alumnos" {:matricula "28791"
-                        :password "101117"
-                        :apell_paterno "Paredes"
-                        :apell_materno "Robles"
-                        :nombre "Mario"
-                        :escuela "UABC"
-                        :carrera "Programacion"
-                        :semestre "8"
-                        :status "A"
-                        :email "mariopardes@servidor.com"})
-  (Insert db "eventos" {:categorias_id "6"
-                        :descripcion "Tutorias de Odontologia, para el desarollo del alumno"
-                        :lugar "Vicerectoria Aula #1"
-                        :titulo "Tutorias de Odontologia"
-                        :fecha_inicio "2019-09-13"
-                        :fecha_terminacion "2019-09-16"
-                        :hora_inicio "08:00:00"
-                        :hora_terminacion "18:00:00"
-                        :total_horas "10"
-                        :total_porciento "80"})
-  (Insert db "registro_evento" {:matricula_id "28787"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "07:45:00"
-                                :hora_salida "09:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28787"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "10:10:00"
-                                :hora_salida "12:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28787"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "13:00:00"
-                                :hora_salida "14:00:00"})
-  (Insert db "registro_evento" {:matricula_id "28787"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "14:20:00"
-                                :hora_salida "18:06:00"})
+  (Query! db registro_correos-sql))
 
-  (Insert db "registro_evento" {:matricula_id "28788"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "08:45:00"
-                                :hora_salida "09:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28788"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "10:30:00"
-                                :hora_salida "12:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28788"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "13:20:00"
-                                :hora_salida "14:00:00"})
-  (Insert db "registro_evento" {:matricula_id "28788"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "15:20:00"
-                                :hora_salida "18:06:00"})
+(defn populate-tables
+  "Populates tables with default data"
+  []
+  (Insert-multi db :users user-rows)
+  (Insert-multi db :categorias categorias-rows))
 
-  (Insert db "registro_evento" {:matricula_id "28789"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "08:40:00"
-                                :hora_salida "09:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28789"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "10:30:00"
-                                :hora_salida "12:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28789"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "13:30:00"
-                                :hora_salida "14:00:00"})
-  (Insert db "registro_evento" {:matricula_id "28789"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "15:30:00"
-                                :hora_salida "18:06:00"})
+(defn reset-database
+  "Re-create database"
+  []
+  (drop-tables)
+  (create-tables)
+  (populate-tables))
 
-  (Insert db "registro_evento" {:matricula_id "28790"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "07:45:00"
-                                :hora_salida "09:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28790"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "10:10:00"
-                                :hora_salida "12:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28790"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "13:00:00"
-                                :hora_salida "14:00:00"})
-  (Insert db "registro_evento" {:matricula_id "28790"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "14:20:00"
-                                :hora_salida "18:06:00"})
-
-  (Insert db "registro_evento" {:matricula_id "28791"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "08:45:00"
-                                :hora_salida "09:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28791"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "10:30:00"
-                                :hora_salida "12:50:00"})
-  (Insert db "registro_evento" {:matricula_id "28791"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "13:20:00"
-                                :hora_salida "14:00:00"})
-  (Insert db "registro_evento" {:matricula_id "28791"
-                                :eventos_id "1"
-                                :fecha "2019-09-13"
-                                :hora_entrada "15:20:00"
-                                :hora_salida "18:06:00"}))
-;;(create-database)
+(comment
+  (reset-database))
