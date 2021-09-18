@@ -46,24 +46,17 @@
       (catch Exception _
         {:status 400 :body "Invalid data"}))))
 
-(defroutes public-routes
-  open-routes)
-
-(defroutes protected-routes
-  proutes)
-
 (defroutes app-routes
   (route/resources "/")
   (route/files "/uploads/" {:root (:uploads config)})
+  open-routes
+  (wrap-login proutes)
   (route/not-found "Not Found"))
 
 (defn -main []
   (jetty/run-jetty
    (-> (routes
-        public-routes
-        (wrap-login protected-routes)
-        (wrap-exception-handling protected-routes)
-        app-routes)
+        (wrap-exception-handling app-routes))
        (wrap-session)
        (session/wrap-noir-session*)
        (wrap-multipart-params)
