@@ -399,12 +399,13 @@
         nombre (str (:nombre row) " " (:apell_paterno row) " " (:apell_materno row))
         alumno-email (:email row)
         subject (str "Hola " nombre ", por favor hacer click en el link del correo!")
-        url (str "<a href='http://localhost:3000/maestros/correos/recibir/" id "'>CLic aqui para confirmar asistencia al evento!</a>")
+        url0 (str (:base-url config) "maestros/correos/recibir/" id)
+        url (str "<a href='" url0 "'>Clic aqui para confirmar asistencia...</a>")
         body {:from "hectorqlucero@fastmail.com"
               :to alumno-email
               :subject subject
               :body [{:type "text/html;charset=utf-8"
-                      :content url}]}]
+                      :content (str "<strong>Hola</strong> " nombre "</br>" url "  --> " url0)}]}]
     body))
 
 (defn correos-mandar [matricula_id eventos_id]

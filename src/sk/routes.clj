@@ -5,7 +5,8 @@
             [sk.routes.alumnos.home :as alumnos-home]
             [sk.routes.alumnos.registrar :as alumnos-registrar]
             [sk.routes.maestros.home :as maestros-home]
-            [sk.routes.maestros.registrar :as maestros-registrar]))
+            [sk.routes.maestros.registrar :as maestros-registrar]
+            [sk.proutes.maestros.eventos :as maestros-eventos]))
 
 (defroutes open-routes
   ;; Start table_ref
@@ -45,4 +46,8 @@
   (GET "/maestros/reset_password/:token" [token] (maestros-registrar/reset-jwt token))
   (POST "/maestros/reset_password" request [] (maestros-registrar/reset-jwt! request))
   ;; End maestros-registrar
+   ;; Start recibir/mandar correos
+  (GET "/maestros/correos/mandar/:matricula_id/:eventos_id" [matricula_id eventos_id] (maestros-eventos/correos-mandar matricula_id eventos_id))
+  (GET "/maestros/correos/recibir/:id" [id] (maestros-eventos/correos-recibir id))
+  ;; End recibir/mandar correos
   )
