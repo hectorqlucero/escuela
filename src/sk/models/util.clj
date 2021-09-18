@@ -93,7 +93,7 @@
 
 (defn get-session-id []
   (try
-    (if (session/get :user_id) (session/get :user_id) 0)
+    (session/get :user_id)
     (catch Exception e (.getMessage e))))
 
 (defn get-matricula-id []
