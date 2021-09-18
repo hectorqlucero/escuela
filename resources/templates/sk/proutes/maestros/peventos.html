@@ -75,7 +75,7 @@ body, html {
     $.get(url);
   }
 function validate(matricula) {
-  setInterval("updateEmail(" + matricula +  ", {{ row.id }})", 30000);
+  setInterval("updateEmail(" + matricula +  ", {{ row.id }})", "{{ etime }}");
   var url = "/eventos/processar/" + matricula + "/{{ row.id }}";
   $.get(url,function(data) {
     var dta = JSON.parse(data);
