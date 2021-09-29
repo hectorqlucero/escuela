@@ -22,5 +22,6 @@
   (GET "/maestros/aprovados/:eventos_id" [eventos_id] (maestros-eventos/aprovados-eventos eventos_id))
   (GET "/maestros/reprovados/:eventos_id" [eventos_id] (maestros-eventos/reprovados-eventos eventos_id))
   (GET "/maestros/resultados/:eventos_id" [eventos_id] (maestros-eventos/resultados-eventos eventos_id))
+  (GET "/maestros/correos/:eventos_id" [eventos_id] (maestros-eventos/correos-eventos eventos_id))
   ;; End maestros-eventos
   )

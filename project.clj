@@ -5,6 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/math.numeric-tower "0.0.4"]
+                 [hiccup "1.0.5"]
                  [clojure-csv/clojure-csv "2.0.2"]
                  [compojure "1.6.2" :exclusions [commons-code]]
                  [lib-noir "0.9.9"]

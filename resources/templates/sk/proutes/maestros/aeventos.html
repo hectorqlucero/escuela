@@ -24,6 +24,7 @@
         <th scope="col">TERMINA</th>
         <th scope="col">HORA</th>
         <th scope="col">RESULTADOS</th>
+        <th scope="col">CORREOS</th>
         <th scope="col">ACTIVAR</th>
       </tr>
     </thead>
@@ -63,6 +64,9 @@
               </a>
             </div>
           </div>
+        </td>
+        <td>
+          <a id="correos" href="/maestros/correos/{{ row.id }}" class="easyui-linkbutton">Correos</a>
         </td>
         <td>
           <a id="activar" href="/eventos/{{ row.id }}" class="easyui-linkbutton">Activar</a>

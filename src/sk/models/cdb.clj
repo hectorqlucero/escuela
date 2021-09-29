@@ -131,6 +131,150 @@
    CONSTRAINT `fk_registro_correos_alumnos` FOREIGN KEY (`matricula_id`) REFERENCES `alumnos` (`matricula`) ON DELETE CASCADE,
    CONSTRAINT `fk_registro_correos_eventos` FOREIGN KEY (`eventos_id`) REFERENCES `eventos` (`id`) ON DELETE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8")
+
+(def registro_correos-rows
+  [
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "8:00:00"
+    :hora_recibir "08:10:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "8:30:00"
+    :hora_recibir "8:32:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "9:00:00"
+    :hora_recibir "9:40:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "9:30:00"
+    :hora_recibir "9:42:00"
+    :fecha "2021-9-28"}
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "10:00:00"
+    :hora_recibir "10:03:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "10:30:00"
+    :hora_recibir "10:34:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 3333
+    :eventos_id 2
+    :hora_mandar "11:00:00"
+    :hora_recibir "11:15:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "8:00:00"
+    :hora_recibir "08:10:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "8:30:00"
+    :hora_recibir "8:32:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "9:00:00"
+    :hora_recibir "9:40:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "9:30:00"
+    :hora_recibir "9:52:00"
+    :fecha "2021-9-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "10:00:00"
+    :hora_recibir "10:05:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "10:30:00"
+    :hora_recibir "10:34:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 2
+    :hora_mandar "11:00:00"
+    :hora_recibir "11:25:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "8:00:00"
+    :hora_recibir "08:30:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "8:30:00"
+    :hora_recibir "8:32:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "9:00:00"
+    :hora_recibir "9:40:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "9:30:00"
+    :hora_recibir "9:42:00"
+    :fecha "2021-9-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "10:00:00"
+    :hora_recibir "10:03:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "10:30:00"
+    :hora_recibir "10:34:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 10615
+    :eventos_id 1
+    :hora_mandar "11:00:00"
+    :hora_recibir "11:15:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "8:00:00"
+    :hora_recibir "08:10:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "8:30:00"
+    :hora_recibir "8:32:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "9:00:00"
+    :hora_recibir "9:05:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "9:30:00"
+    :hora_recibir "9:32:00"
+    :fecha "2021-9-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "10:00:00"
+    :hora_recibir "10:05:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "10:30:00"
+    :hora_recibir "10:34:00"
+    :fecha "2021-09-28"}
+   {:matricula_id 1163580
+    :eventos_id 2
+    :hora_mandar "11:00:00"
+    :hora_recibir "11:05:00"
+    :fecha "2021-09-28"}
+   ])
 ;; End registro_correos table
 
 (defn drop-tables
@@ -166,5 +310,9 @@
   (create-tables)
   (populate-tables))
 
+(defn testor []
+  (Insert-multi db :registro_correos registro_correos-rows))
+
 (comment
+  (testor)
   (reset-database))

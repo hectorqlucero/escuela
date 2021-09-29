@@ -1,6 +1,7 @@
 (ns sk.proutes.maestros.eventos
   (:require [cheshire.core :refer [generate-string]]
             [clojure.java.io :as io]
+            [hiccup.core :refer [html]]
             [noir.response :refer [redirect]]
             [selmer.parser :refer [render-file]]
             [sk.models.crud :refer [Delete Insert Query Save Update config db]]
@@ -426,3 +427,60 @@
         row {:hora_recibir hora-recibir}
         result (Update db :registro_correos row ["id = ?" id])]
     result))
+;; Start correos-eventos
+(def totals-sql
+  "
+  SELECT
+  COUNT(hora_recibir) as mandados,
+  SUM(TIMEDIFF(hora_recibir,hora_mandar)) / 100 as diferencia
+  FROM registro_correos
+  WHERE 
+  matricula_id = ?
+  and eventos_id = ?
+  GROUP BY matricula_id
+  ")
+
+(def correos-sql
+  "
+  SELECT
+  r.matricula_id,
+  r.eventos_id,
+  CONCAT(a.nombre,' ',a.apell_paterno,' ',a.apell_materno) as nombre,
+  DATE_FORMAT(r.fecha,'%d/%c/%Y') as fecha
+  FROM registro_evento r
+  JOIN alumnos a on a.matricula = r.matricula_id
+  WHERE 
+  r.eventos_id = ?
+  and r.matricula_id = ?
+  limit 1
+  ")
+
+(defn process-totals [row]
+  (let [matricula_id (:matricula_id row)
+        eventos_id (:eventos_id row)
+        trow (first (Query db [totals-sql matricula_id eventos_id]))
+        mandados (:mandados trow)
+        row (assoc row 
+                   :mandados  mandados 
+                   :diferencia (first (clojure.string/split (str (:diferencia trow)) #"\.")))]
+    row))
+
+(defn process-correos-eventos [row]
+  (let [matricula_id  (:matricula_id row)
+        eventos_id (:evento-id row)
+        r-rows (Query db [correos-sql eventos_id matricula_id])
+        rows (map process-totals r-rows)]
+    rows))
+
+(defn correos-eventos [eventos-id]
+  (if-not (nil? (get-session-id))
+    (let [r-rows (Query db ["select distinct matricula_id from registro_evento where eventos_id = ?" eventos-id])
+          r-rows (map #(assoc % :evento-id eventos-id) r-rows)
+          rows (flatten (map process-correos-eventos r-rows))]
+      (render-file "sk/proutes/maestros/correos.html" {:title "Correos"
+                                                       :rows rows
+                                                       :ok (get-session-id)}))))
+;; End correos-eventos
+
+(comment
+  (correos-eventos 2))
