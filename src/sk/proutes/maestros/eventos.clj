@@ -425,8 +425,9 @@
 (defn correos-recibir [id]
   (let [hora-recibir (current_time_internal)
         row {:hora_recibir hora-recibir}
-        result (Update db :registro_correos row ["id = ?" id])]
+        result (Update db :registro_correos row ["id = ? AND hora_recibir IS NULL" id])]
     result))
+
 ;; Start correos-eventos
 (def totals-sql
   "
