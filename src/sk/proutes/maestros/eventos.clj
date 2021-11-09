@@ -406,7 +406,7 @@
               :to alumno-email
               :subject subject
               :body [{:type "text/html;charset=utf-8"
-                      :content (str "<strong>Hola</strong> " nombre "</br>" url "  --> " url0)}]}]
+                      :content (str "<strong>Hola</strong> " nombre "</br>" url)}]}]
     body))
 
 (defn correos-mandar [matricula_id eventos_id]
