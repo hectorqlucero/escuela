@@ -402,7 +402,7 @@
         subject (str "Hola " nombre ", por favor hacer click en el link del correo!")
         url0 (str (:base-url config) "maestros/correos/recibir/" id)
         url (str "<a href='" url0 "'>Clic aqui para confirmar asistencia...</a>")
-        body {:from "hectorqlucero@fastmail.com"
+        body {:from "escueladeodontologiamxli@fastmail.com"
               :to alumno-email
               :subject subject
               :body [{:type "text/html;charset=utf-8"
@@ -483,4 +483,6 @@
 ;; End correos-eventos
 
 (comment
-  (correos-eventos 2))
+  (correos-eventos 2)
+  (correos-mandar "111111" "9")
+  (correos-recibir "586"))
