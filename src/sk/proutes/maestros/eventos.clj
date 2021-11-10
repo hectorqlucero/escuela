@@ -435,7 +435,6 @@
 (defn check-correos-time [eventos_id]
   (let [hora_tabla (get-hora-tabla eventos_id)
         hora_mandar (get-hora-mandar)]
-    [hora_mandar hora_tabla]
     (if (> hora_tabla hora_mandar) 1 0)))
 
 (defn process-email [matricula_id eventos_id]
@@ -460,7 +459,7 @@
   (let [hora-recibir (current_time_internal)
         row {:hora_recibir hora-recibir}
         result (Update db :registro_correos row ["id = ? AND hora_recibir IS NULL" id])
-        message "Gracias por su verificación de correo.  Puede cerrar la pagina!"]
+        message "Gracias por su verificación de correo.  Puede cerrar la pagina"]
     (render-file "sk/proutes/maestros/recibir.html" {:message message})))
 
 ;; Start correos-eventos
