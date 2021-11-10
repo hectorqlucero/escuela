@@ -460,9 +460,7 @@
   (let [hora-recibir (current_time_internal)
         row {:hora_recibir hora-recibir}
         result (Update db :registro_correos row ["id = ? AND hora_recibir IS NULL" id])
-        message (if (> result 0) 
-                  "Se verifico su correo, puede cerrar la pagina!!!"
-                  "No se actualizo su verificación. Posibles causas es que ya se actualizo anteriormente, puede cerrar la pagina!!!")]
+        message "Gracias por su verificación de correo.  Puede cerrar la pagina!"]
     (render-file "sk/proutes/maestros/recibir.html" {:message message})))
 
 ;; Start correos-eventos
