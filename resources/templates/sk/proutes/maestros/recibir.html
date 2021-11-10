@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% style "/easyui/themes/default/easyui.css" %}
+{% style "/easyui/themes/icon.css" %}
+{% style "/easyui/themes/color.css" %}
+<style>
+body, html {
+  height: 100%;
+}
+.bg {
+  color:black;
+  font-weight:bold;
+  background-image: url("/images/background.jpeg");
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
+{% endblock %}
+
+{% block body-start %}
+<body class="bg">
+{% endblock %}
+
+{% block menu %}{% endblock %}
+{% block content %}
+<h1>{{ message }}</h1>
+{% endblock %}
