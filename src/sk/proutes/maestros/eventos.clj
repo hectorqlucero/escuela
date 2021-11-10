@@ -409,7 +409,36 @@
                       :content (str "<strong>Hola</strong> " nombre "</br>" url)}]}]
     body))
 
-(defn correos-mandar [matricula_id eventos_id]
+(defn get-hora-mandar []
+  (->> (Query db (str "select TIME_TO_SEC('" (current_time_internal) "') as hora_mandar"))
+       first
+       :hora_mandar))
+
+
+(defn check-evento-dates [eventos_id]
+  (let [row (first (Query db [(str "select TO_DAYS(fecha_inicio) as fecha_inicio,
+                                   TO_DAYS(fecha_terminacion) as fecha_terminacion,
+                                   TO_DAYS(NOW()) as fecha_hoy
+                                   FROM eventos WHERE id = ?") eventos_id]))
+        fecha_inicio (:fecha_inicio row)
+        fecha_terminacion (:fecha_terminacion row)
+        fecha_hoy (:fecha_hoy row)]
+    (if (and (>= fecha_hoy fecha_inicio)
+             (<= fecha_hoy fecha_terminacion)) 1 0)))
+
+(defn get-hora-tabla [eventos_id]
+  (let [hora_tabla (->> (Query db ["select TIME_TO_SEC(hora_terminacion) as hora_terminacion from eventos where id = ?" eventos_id])
+                        first
+                        :hora_terminacion)]
+    hora_tabla))
+
+(defn check-correos-time [eventos_id]
+  (let [hora_tabla (get-hora-tabla eventos_id)
+        hora_mandar (get-hora-mandar)]
+    [hora_mandar hora_tabla]
+    (if (> hora_tabla hora_mandar) 1 0)))
+
+(defn process-email [matricula_id eventos_id]
   (let [hora_mandar (current_time_internal)
         fecha (format-date-internal (current_date))
         rows {:matricula_id matricula_id
@@ -420,6 +449,11 @@
         r-correos-id (or (:generated_key (first result)) nil)
         email-body (when r-correos-id (build-correos-email-body r-correos-id matricula_id))]
     (when email-body (send-email host email-body))))
+
+(defn correos-mandar [matricula_id eventos_id]
+  (when (and (= (check-correos-time eventos_id) 1)
+             (= (check-evento-dates eventos_id) 1))
+    (process-email matricula_id eventos_id)))
 ;; End correos-mandar
 
 (defn correos-recibir [id]
@@ -483,7 +517,16 @@
                                                        :ok (get-session-id)}))))
 ;; End correos-eventos
 
+
 (comment
+  (->> (Query db (str "select DAYOFYEAR('" (format-date-internal (current_date)) "') as doy"))
+       first
+       :doy)
+  (check-evento-dates "9")
+  (check-correos-time "9")
+  (get-hora-tabla "9")
+  (get-hora-mandar)
+  (current_time_internal)
   (correos-eventos 2)
   (correos-mandar "111111" "9")
   (correos-recibir "586"))
