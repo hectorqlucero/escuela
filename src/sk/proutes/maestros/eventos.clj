@@ -299,7 +299,7 @@
    titulo,
    descripcion,
    lugar,
-   DATE_FORMAT(fecha_inicio,'%d/%m/%Y') as fecha_inicio,
+   DATE_FORMAT(fecha_inicio,'%d/%m/%Y') as fecha_formatted,
    TIME_FORMAT(hora_inicio,'%h:%i %p') as hora_inicio,
    DATE_FORMAT(fecha_terminacion,'%d/%m/%Y') as fecha_terminacion,
    TIME_FORMAT(hora_terminacion,'%h:%i %p') as hora_terminacion
