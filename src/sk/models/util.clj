@@ -544,7 +544,7 @@
   (let [photo-val (get-photo-val table-name field-name id-name id-value)
         uuid (str (UUID/randomUUID))
         placeholder "<img src='/images/placeholder_profile.png' width='95' height='71'></img>"
-        path (str (:path config) "eventos/")
+        path (:path config) 
         photo (build-photo-html photo-val uuid path)]
     (if (empty? photo-val) placeholder photo)))
 

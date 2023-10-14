@@ -71,7 +71,7 @@
       (render-file "sk/proutes/maestros/peventos.html" {:title title
                                                         :matricula matricula
                                                         :etime etime
-                                                        :path (str (:path config) "eventos/")
+                                                        :path (:path config)
                                                         :row row
                                                         :erows erows}))
     (redirect "/")))
@@ -250,7 +250,7 @@
 ;; End eventos form
 
 ;; Start Save form
-(def UPLOADS (str (config :uploads) "/es/eventos/"))
+(def UPLOADS (config :uploads))
 
 (defn upload-imagen [file _]
   (let [tempfile  (:tempfile file)
@@ -276,10 +276,10 @@
   (if-not (nil? (get-session-id))
     (let [id (or (:id params) "0")
           file (:file params)
-          imagen (if-not (zero? (:size file))
-                   (upload-imagen file id)
-                   (:imagen params))
-          postvars (assoc (create-data params) :id id :imagen imagen)
+          imagen (:filename file)
+          postvars (if (> (:size file) 0)
+                      (assoc (create-data params) :id id :imagen imagen)
+                      (assoc (create-data params) :id id))
           result (Save db :eventos postvars ["id = ?" id])]
       (if (seq result)
         (generate-string {:success "Record processado correctamente!"})
