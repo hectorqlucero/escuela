@@ -277,6 +277,7 @@
     (let [id (or (:id params) "0")
           file (:file params)
           imagen (:filename file)
+          imgrslt (upload-imagen file id)
           postvars (if (> (:size file) 0)
                       (assoc (create-data params) :id id :imagen imagen)
                       (assoc (create-data params) :id id))
